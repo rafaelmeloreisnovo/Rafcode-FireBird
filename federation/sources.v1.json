@@ -1,0 +1,27 @@
+{
+  "schema": "raf-federation-sources-v1",
+  "producer": "rafaelmeloreisnovo/Rafcode-FireBird",
+  "automatic_network_access": false,
+  "database_access": false,
+  "enable_by_default": false,
+  "sources": [
+    {
+      "role": "producer",
+      "repo": "rafaelmeloreisnovo/Rafcode-FireBird",
+      "commit": "b7c959beb8c1972cb266ae20e32c1066b8d60cba",
+      "mode": "PIN_ONLY"
+    },
+    {
+      "role": "engine_fork",
+      "repo": "rafaelmeloreisnovo/firebird_rafcodephi",
+      "commit": "f78dbc4e500e8896a4004dd2fb7d7a94785e54df",
+      "mode": "PIN_ONLY"
+    },
+    {
+      "role": "upstream_reference",
+      "repo": "FirebirdSQL/firebird",
+      "commit": "f78dbc4e500e8896a4004dd2fb7d7a94785e54df",
+      "mode": "PIN_ONLY"
+    }
+  ]
+}
