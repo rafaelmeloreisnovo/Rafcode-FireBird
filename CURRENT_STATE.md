@@ -30,3 +30,13 @@
 - **F1–F4**: live read-only adapter, #9269 fault reproduction, syslog transport, genuine DB failover/hot-swap = `NOT_IMPLEMENTED/NOT_RUN`.
 - **Plan target**: 2026-11-09 F0 already demonstrated in scope, next F1 2026-11-11 remains conditional (not scheduled). For exact scope and limitations see [federation receipt](receipts/2026-11-06-FEDERATION-G0-CI.json).
 - **Authority**: producer owns original federation tools; Firebird upstream/fork source stays unchanged. `claim_allowed=false`, `merge_allowed=false`.
+
+## G1 RAFCODE MON probe delta — 2026-11-06 (exact source CI, DRAFT/HOLD)
+
+- **Feature source HEAD tested**: `9438726c2a5a868e65957aa937e967f7e3a1967d` (parent PR#2 branch; no merge/main mutation).
+- **CI**: [run 42172109238](https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42172109238) SUCCESS, job 127742099302. GCC+Clang C checks unchanged, 17 audit Python and 37 federation Python tests PASS.
+- **Incident center**: Firebird [#9269](https://github.com/FirebirdSQL/firebird/issues/9269) distinguishes H1 dirty-cache/writer-suspend, H2 mismatched CDS hash key->descriptor, H3 other unknown. Evidence only from source code snapshot `f78dbc4e500e8896a4004dd2fb7d7a94785e54df`; causation unproven.
+- **G1**: bounded one-shot MON$ Firebird adapter code + negative fake client tests = `PASS_SCOPED_CI`; actual Firebird DB connection, Windows disk-full repro, driver binary validation = `NOT_RUN`.
+- **Safety**: default policy OFF, operator ACK + disposable env declaration; explicit read-only TPB, rollback/close, bounded child timeout, no engine writes by adapter code. Firebird ON CONNECT/DISCONNECT triggers can have side effects outside read-only transaction => **database unchanged cannot be claimed**.
+- **G2/G3/G4**: OS-level hang reproducer, engine fix and independent attestations BLOCKED by missing runtime/authoritative evidence. `claim_allowed=false`, `merge_allowed=false`.
+- **Receipt**: [G1 scoped CI](receipts/2026-11-06-MON-G1-scoped-ci.json); previous `F0` evidence preserved. R3 next: disposable runtime probe & exact #9269 causal witness before any engine modification.

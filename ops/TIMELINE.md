@@ -15,3 +15,5 @@ Use `supersedes: event-id` for later correction; do not erase prior rows. Exact 
 | 2026-11-06 | Federation synthetic gate G0 exact code HEAD `a708a0add36b46cd38defff01a64d510039159d5` | [Actions 42168907060](https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42168907060); job 127731849705 | PASS_SCOPED_CI |
 
 | 2026-11-06 | G1 candidate: optional supervised read-only MON$ one-shot implementation plus Firebird #9269 H1/H2 source model | New scoped branch source; exact-head CI pending | IMPLEMENTED_UNTESTED |
+
+| 2026-11-06 | G1 test fixture root initially failed in run 42171784931; one-line fix in 679ea684; hardening fix to suppress false UNKNOWN promotion at `9438726c2a5a868e65957aa937e967f7e3a1967d` | [CI 42172109238](https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42172109238) | PASS_SCOPED_CI (37 federation Python + 17 audit, GCC/Clang) |

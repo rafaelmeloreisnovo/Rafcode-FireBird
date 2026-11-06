@@ -1,0 +1,88 @@
+{
+  "schema": "rafcode-firebird-mon-g1-scoped-ci-v1",
+  "event_id": "MU-RAFCODE-FIREBIRD-MON-G1-20261106-S1",
+  "date_utc": "2026-11-06",
+  "producer": "rafaelmeloreisnovo/Rafcode-FireBird",
+  "branch": "feat/firebird-mon-probe-g1-v1",
+  "tested_source_commit": "9438726c2a5a868e65957aa937e967f7e3a1967d",
+  "parent_branch": "feat/federation-optin-syslog-failsafe-v1",
+  "upstream_issue": "https://github.com/FirebirdSQL/firebird/issues/9269",
+  "inspected_engine_ref": "rafaelmeloreisnovo/firebird_rafcodephi@f78dbc4e500e8896a4004dd2fb7d7a94785e54df",
+  "engine_cache_blob": "b52272e6286c1df06d7bd8eb9483fb370204477d",
+  "evidence": {
+    "ci_run_id": 42172109238,
+    "ci_run_url": "https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42172109238",
+    "ci_job_id": 127742099302,
+    "ci_status": "completed",
+    "ci_conclusion": "success",
+    "compilers": [
+      "gcc",
+      "clang"
+    ],
+    "federation_C_checks_per_compiler": 50026,
+    "syslog_C_checks_per_compiler": 20008,
+    "audit_python_tests": 17,
+    "federation_python_tests": 37,
+    "first_failed_run_id": 42171784931,
+    "first_failure_type": "test fixture incorrect root",
+    "corrected_in": "679ea684197383b09b249969104ecd6d65925830",
+    "prior_success_run_id": 42171895198,
+    "live_driver_installed_by_ci": false,
+    "actual_firebird_database_access": "NOT_RUN",
+    "firebird_windows_disk_full_reproduction": "NOT_RUN",
+    "changes_to_firebird_source": false,
+    "independent_runtime_review": "NOT_RUN",
+    "claim_allowed": false,
+    "merge_allowed": false
+  },
+  "mechanisms": [
+    {
+      "hypothesis": "H1",
+      "description": "cache writer suspend vs dirty buffer pressure",
+      "state": "UNRESOLVED"
+    },
+    {
+      "hypothesis": "H2",
+      "description": "key->descriptor mismatch in CDS hash, key-only erase path",
+      "state": "UNRESOLVED"
+    },
+    {
+      "hypothesis": "H3",
+      "description": "other lock or I/O path",
+      "state": "UNRESOLVED"
+    }
+  ],
+  "safety": {
+    "default_policy": "OFF",
+    "operator_ack_required": true,
+    "disposable_assertion_required": true,
+    "source_allowlist_pinned": true,
+    "mon_query_scope": "MON$DATABASE JOIN MON$IO_STATS one SELECT",
+    "read_only_transaction": true,
+    "rollback_and_close_in_finally": true,
+    "child_deadline_seconds": [
+      4,
+      20
+    ],
+    "sanitized_result": true,
+    "writer_progress_known": false,
+    "adapter_sql_write_statements_issued": 0,
+    "database_total_side_effects": "TOKEN_VAZIO: ON CONNECT/DISCONNECT triggers may write in their own transactions",
+    "mon_snapshot_diagnostic_only": true,
+    "db_failover": "NOT_IMPLEMENTED",
+    "db_hotswap": "NOT_IMPLEMENTED",
+    "db_syslog_transport": "NOT_IMPLEMENTED"
+  },
+  "gates": {
+    "G0": "PASS_SCOPED_CI",
+    "G1_synthetic": "PASS_SCOPED_CI",
+    "G1_live": "NOT_RUN",
+    "G2_diskfull": "NOT_RUN",
+    "G3_engine_patch": "NOT_IMPLEMENTED",
+    "G4_external_attestation": "NOT_RUN"
+  },
+  "rollback": "Close DRAFT/HOLD PR or revert G1 isolated commits; no production DB or Firebird engine code touched",
+  "next": "Run authorized disposable Firebird 5 with known database triggers and least-privilege credentials, then establish causal H1/H2 evidence via bounded fault reproduction on Windows disposable VHDX",
+  "claim_allowed": false,
+  "merge_allowed": false
+}

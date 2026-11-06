@@ -36,3 +36,9 @@
 - Issue #9269 center: [federation/FORENSICS_9269.md](../federation/FORENSICS_9269.md) → exact pinned Firebird source cch.cpp → H1 suspension/cache writer OR H2 key/descriptor mismatch → falsifiers.
 - One-shot outer adapter: [federation/ADAPTER_CONTRACT.md](../federation/ADAPTER_CONTRACT.md) → [federation/mon_probe.py](../federation/mon_probe.py) → negative tests → exact CI receipt.
 - Observability cannot prove writes or fix engine cache; source patch and full Windows disk-full test remain separate authorized work. State is IMPLEMENTED_UNTESTED until exact source SHA and CI log readback.
+
+## Verified G1 checkpoint (2026-11-06)
+
+- Tested source `9438726c2a5a868e65957aa937e967f7e3a1967d` CI [42172109238](https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42172109238), GCC+Clang C regressions and Python 17+37 PASS scoped.
+- Root hypothesis: issue [#9269](https://github.com/FirebirdSQL/firebird/issues/9269) → [FORENSICS](../federation/FORENSICS_9269.md) → [MON$ adapter](../federation/mon_probe.py) → [receipt](../receipts/2026-11-06-MON-G1-scoped-ci.json). Real Firebird runtime `NOT_RUN`, no engine patch, DB trigger side effects `TOKEN_VAZIO`.
+- DRAFT/HOLD and denied production claims. Next: authorized disposable Firebird real instance, externally witnessed causal fault reproduction.

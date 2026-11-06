@@ -27,3 +27,7 @@ Live monitoring adapter, background service, automatic failover, persistent hot 
 - Added adversarial fake-driver tests, [forensic issue #9269 model](../federation/FORENSICS_9269.md), source references and updated adapter contract.
 - No Firebird engine source touched, no DB connection ever performed by CI, no dependency installed, no syslog transport or autonomous recovery.
 - Exact-head CI and readback to be appended only after verified run. Until then `IMPLEMENTED_UNTESTED`, `claim_allowed=false`, `merge_allowed=false`.
+
+## G1 test receipt — 2026-11-06 (no runtime release)
+
+Exact tested code `9438726c2a5a868e65957aa937e967f7e3a1967d`, [CI 42172109238](https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42172109238) succeeded. 37 Python federation + 17 Python audit tests, plus GCC/Clang C G0/G1 regressions. Fixed a test fixture path, blocked false success for UNKNOWN and narrowed misleading `database_mutations=0` to `adapter_write_statements_issued=0`. Firebird's database event triggers may write on connection; no live DB was touched. Parent trial failure 42171784931 is preserved in timeline; current G1 is PASS_SCOPED_CI only. No merge, no live driver installation, no HA or disk-full recovery claim.
