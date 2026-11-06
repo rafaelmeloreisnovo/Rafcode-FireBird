@@ -10,7 +10,7 @@ from types import SimpleNamespace
 from federation.manifest import read_bounded, plan
 from federation.mon_probe import (SQL, SCHEMA, ProbeBlocked, _output, _preflight,
                                    _sample_with_client, _verified_worker_json, supervise)
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]  # repository root, not federation/
 class Cursor:
     def __init__(self, rows):
         self.rows = iter(rows)
