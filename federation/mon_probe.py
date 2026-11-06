@@ -3,7 +3,9 @@
 
 SOURCE != EXECUTION != EVIDENCE != CLAIM. A readable MON$ snapshot is NOT
 evidence of a healthy writer or proof against Firebird #9269. No SQL/Trace
-text, identifiers, raw error details, daemon, recovery, failover or writes.
+text, identifiers, raw error details, daemon, recovery, failover or SQL writes.
+Firebird database-event triggers may execute separate transactions on attach;
+therefore an observer attachment cannot promise ZERO database mutations.
 
 The *parent* starts one short-lived child process and enforces a wall-clock
 deadline; the child uses a fresh read-only Firebird transaction. The parent
@@ -32,7 +34,7 @@ SQL = (
     'ON i.MON$STAT_ID = d.MON$STAT_ID AND i.MON$STAT_GROUP = 0'
 )
 RESULT_KEYS = frozenset(("schema", "state", "page_reads", "page_writes",
-                         "snapshot_known", "writer_progress_known", "database_mutations"))
+                         "snapshot_known", "writer_progress_known", "adapter_write_statements_issued"))
 MAX_U64 = (1 << 63) - 1
 
 class ProbeBlocked(Exception):
@@ -52,7 +54,11 @@ def _output(state, reads=None, writes=None):
     writes = _valid_count(writes, allow_missing=True)
     return {"schema": SCHEMA, "state": state, "page_reads": reads,
             "page_writes": writes, "snapshot_known": state == "MON_SNAPSHOT",
-            "writer_progress_known": False, "database_mutations": 0}
+            "writer_progress_known": False, "adapter_write_statements_issued": 0}
+
+def _validate_registry():
+    # Source authority and SHA-pin syntax must be reviewed before any DB attach.
+    validate_sources(read_bounded(ROOT / "federation" / "sources.v1.json"))
 
 def _validated_policy(path):
     # PRE: even a valid enabled policy is never a claim of runtime authority.
@@ -110,6 +116,7 @@ def _sample_with_client(connect, tpb, isolation, access, dsn, user, password):
 def _worker(policy_path, ack, environment):
     try:
         policy = _validated_policy(policy_path)
+        _validate_registry()
         _preflight(policy, ack, environment)
         if importlib.metadata.version("firebird-driver") != EXPECTED_DRIVER_VERSION:
             raise ProbeBlocked()
@@ -138,7 +145,7 @@ def _verified_worker_json(raw):
         raise ProbeBlocked()
     if type(data["snapshot_known"]) is not bool or (data["snapshot_known"] != (data["state"] == "MON_SNAPSHOT")):
         raise ProbeBlocked()
-    if data["writer_progress_known"] is not False or type(data["database_mutations"]) is not int or data["database_mutations"] != 0:
+    if data["writer_progress_known"] is not False or type(data["adapter_write_statements_issued"]) is not int or data["adapter_write_statements_issued"] != 0:
         raise ProbeBlocked()
     _valid_count(data["page_reads"], allow_missing=True)
     _valid_count(data["page_writes"], allow_missing=True)
@@ -150,8 +157,9 @@ def supervise(policy_path, ack, environment, deadline, runner=subprocess.run):
     """The only path that can spawn a child. Never writes a config file."""
     try:
         policy = _validated_policy(policy_path)
+        _validate_registry()
         _preflight(policy, ack, environment)
-    except (ManifestError, OSError, ProbeBlocked, UnicodeError):
+    except (ManifestError, OSError, ProbeBlocked, UnicodeError, ValueError):
         return "BLOCKED", None
     if type(deadline) is not int or not (4 <= deadline <= 20):
         return "BLOCKED", None
@@ -172,7 +180,9 @@ def supervise(policy_path, ack, environment, deadline, runner=subprocess.run):
         observation = _verified_worker_json(result.stdout)
     except ProbeBlocked:
         return "OBSERVATION_FAILED", None
-    return "OBSERVED_SCOPED", observation
+    # UNKNOWN does not mean successful monitoring: it can mean missing driver,
+    # failed connection, malformed transaction or database hang.
+    return ("OBSERVED_SCOPED" if observation["state"] == "MON_SNAPSHOT" else "OBSERVATION_UNKNOWN"), observation
 
 def main(argv=None):
     p = argparse.ArgumentParser(description="One-shot, opt-in, read-only Firebird MON$ probe")
@@ -188,7 +198,7 @@ def main(argv=None):
         except (OSError, ManifestError):
             state = "BLOCKED"
         print(json.dumps({"schema": SCHEMA, "state": state, "network_calls": 0,
-                          "database_mutations": 0}, sort_keys=True))
+                          "adapter_write_statements_issued": 0}, sort_keys=True))
         return 0 if state != "BLOCKED" else 2
     if a.action == "_worker":
         # Even direct invocation of the private worker must be opt-in.

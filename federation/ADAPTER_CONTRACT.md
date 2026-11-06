@@ -17,7 +17,7 @@ Actual code: one fixed SQL SELECT over `MON$DATABASE` plus `MON$IO_STATS`, fresh
    ```
 6. Treat `MON_SNAPSHOT` as **only** a readable metadata snapshot. It cannot certify healthy writes. On `UNKNOWN` / `DEADLINE_EXCEEDED` / `OBSERVATION_FAILED`, stop and investigate; no automatic retries or recovery.
 
-The parent process kills/reaps the child on timeout. This does NOT guarantee that a server-side statement has been fully cancelled immediately. The outgoing JSON has `writer_progress_known=false` and `database_mutations=0` as a declaration of adapter scope, not independent proof of engine state.
+The parent process kills/reaps the child on timeout. This does NOT guarantee that a server-side statement has been fully cancelled immediately. The outgoing JSON has `writer_progress_known=false` and `adapter_write_statements_issued=0` as a declaration of SQL issued by adapter code, **not** proof the database was unchanged. Firebird `ON CONNECT` and `ON DISCONNECT` database-event triggers can execute their own transactions even when subsequent MON$ sampling uses a READ-only TPB. Only use a DBA-reviewed disposable database with trigger activity understood, and never claim that opening an attachment is side-effect-free.
 
 ## Non-features explicitly held
 
@@ -30,3 +30,5 @@ Default policy is `enabled=false`. Invalid policy, stale source, missing ACK, mi
 Synthetic negative tests in `federation/tests/test_mon_probe.py` inject fake clients and verify explicit read-only TPB, exactly one allowlisted SELECT, rollback/close, no credential echo, bounded child timeout, schema guards, malformed data rejection and false progress suppression. **These do not substitute Firebird live test evidence.**
 
 Related forensic hypotheses: [FORENSICS_9269](FORENSICS_9269.md).
+
+External authority: https://www.firebirdsql.org/file/documentation/html/en/refdocs/fblangref50/firebird-50-language-reference.html (database trigger execution semantics); source registry allowlist+40-digit SHA pins are re-validated at the parent and child gates. UNKNOWN child observation does NOT promote to OBSERVED_SCOPED.

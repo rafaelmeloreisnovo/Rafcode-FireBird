@@ -45,3 +45,5 @@ Never recreate disk exhaustion on a production volume, restart the engine autono
 - Firebird monitor semantics: https://github.com/FirebirdSQL/firebird/blob/master/doc/README.monitoring_tables
 - Official Firebird Python driver transaction guide: https://firebird-driver.readthedocs.io/usage-guide/transactions/
 - Engine source at SHA: https://github.com/rafaelmeloreisnovo/firebird_rafcodephi/blob/f78dbc4e500e8896a4004dd2fb7d7a94785e54df/src/jrd/cch.cpp
+
+**Additional observability confounder:** Firebird database event triggers (ON CONNECT/ON DISCONNECT) run in their own transactions, so even an explicitly read-only monitoring transaction cannot certify the entire *attachment lifecycle* had no DB effects. Source: https://www.firebirdsql.org/file/documentation/html/en/refdocs/fblangref50/firebird-50-language-reference.html . Gate requires disposable test DB and trigger audit.

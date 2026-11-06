@@ -11,3 +11,5 @@ Read `../CURRENT_STATE.md`, `../AGENTS.md`, `README.md`, `ADAPTER_CONTRACT.md`, 
 **Change gate:** every behavior change includes source SHA, falsifier, exact-head CI and scoped rollback. New field defaults to unknown. Actor verification and independently proven engine fix are still TOKEN_VAZIO. PASS_SCOPED_CI can apply only to synthetic tests until actual disposable DB runs.
 
 Refer to [ops procedures](../ops/PROCEDURES.md), [release notes](../ops/RELEASE_NOTES.md), original MIT/LICENSE boundaries, upstream Firebird license and ISO 8000 informative quality references; never claim certification.
+
+**Read-only boundary amendment:** Firebird ON CONNECT/ON DISCONNECT database triggers may execute separate write transactions. The adapter claims zero SQL write statements **issued by itself**, not zero writes in the database. Never promote an UNKNOWN probe (including missing driver) to scoped success. Source registry validation must precede any runtime attachment.

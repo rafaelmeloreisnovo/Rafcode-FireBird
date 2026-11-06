@@ -65,7 +65,7 @@ class FirebirdMonTests(unittest.TestCase):
         result,con,calls=self.sample([(8192, 10, 5)])
         self.assertEqual(result["state"],"MON_SNAPSHOT")
         self.assertFalse(result["writer_progress_known"])
-        self.assertEqual(result["database_mutations"],0)
+        self.assertEqual(result["adapter_write_statements_issued"],0)
         self.assertEqual(con.tr.cursor_obj.sql,[SQL])
         self.assertEqual(con.buffers,[b"READ_ONLY_TPB"])
         self.assertEqual((con.tr.rollbacks,con.closed),(1,1))
@@ -126,7 +126,7 @@ class FirebirdMonTests(unittest.TestCase):
         x=_output("MON_SNAPSHOT",1,2);x["writer_progress_known"]=True
         with self.assertRaises(ProbeBlocked):_verified_worker_json(json.dumps(x))
     def test_result_schema_rejects_bogus_zero_types(self):
-        x=_output("MON_SNAPSHOT",1,2);x["database_mutations"]=False
+        x=_output("MON_SNAPSHOT",1,2);x["adapter_write_statements_issued"]=False
         with self.assertRaises(ProbeBlocked):_verified_worker_json(json.dumps(x))
     def test_result_schema_rejects_non_json(self):
         with self.assertRaises(ProbeBlocked):_verified_worker_json("SECRET_NOT_LOGGED")
@@ -159,6 +159,21 @@ class FirebirdMonTests(unittest.TestCase):
             path=Path(td)/"policy.json";path.write_text(json.dumps(self.policy))
             def run(*args,**kw):return SimpleNamespace(returncode=0,stdout='{"SQL":"secret"}',stderr="")
             self.assertEqual(supervise(path,True,self.env,6,run),("OBSERVATION_FAILED",None))
+    def test_unknown_worker_never_promotes_to_scoped_pass(self):
+        with tempfile.TemporaryDirectory() as td:
+            path=Path(td)/"policy.json";path.write_text(json.dumps(self.policy))
+            def run(*args,**kw):
+                return SimpleNamespace(returncode=0,stdout=json.dumps(_output("UNKNOWN")),stderr="")
+            state,obs=supervise(path,True,self.env,6,run)
+            self.assertEqual(state,"OBSERVATION_UNKNOWN")
+            self.assertFalse(obs["snapshot_known"])
+    def test_negative_fake_registry_blocks_observation(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as td:
+            path=Path(td)/"policy.json";path.write_text(json.dumps(self.policy))
+            def run(*args,**kw):raise AssertionError("invalid registry must not spawn")
+            with patch("federation.mon_probe.validate_sources",side_effect=ValueError("untrusted")):
+                self.assertEqual(supervise(path,True,self.env,6,run),("BLOCKED",None))
     def test_extreme_deadline_blocked(self):
         with tempfile.TemporaryDirectory() as td:
             path=Path(td)/"policy.json";path.write_text(json.dumps(self.policy))
