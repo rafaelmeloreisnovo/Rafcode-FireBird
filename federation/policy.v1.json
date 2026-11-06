@@ -1,0 +1,16 @@
+{
+  "schema": "raf-federation-policy-v1",
+  "abi_version": 1,
+  "revision": 1,
+  "enabled": false,
+  "sink": "NONE",
+  "read_only": true,
+  "auto_recovery": false,
+  "auto_failover": false,
+  "auto_backup_restore": false,
+  "auto_firebird_config_change": false,
+  "syslog_transport": "DISABLED",
+  "human_ack_required": true,
+  "rollback": "LAST_REVIEWED_CONFIG",
+  "scope": "OBSERVER_ONLY"
+}

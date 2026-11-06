@@ -3,6 +3,7 @@
 | Path | Work | License or authority |
 | --- | --- | --- |
 | `NUCLEOS/include`, `NUCLEOS/src`, `NUCLEOS/tests` | Original and explicitly imported RAFAELIA C code | MIT: [NUCLEOS/LICENSE](../NUCLEOS/LICENSE) |
+| `federation/*.py`, `federation/tests/` | Original offline manifest / CLI verification | MIT: [audit/LICENSE](../audit/LICENSE) |
 | `audit/`, `scripts/` | Original hosted verification tooling | MIT: [audit/LICENSE](../audit/LICENSE) |
 | `README.md`, `AGENTS.md`, `CURRENT_STATE.md`, `001_PONTEIRO/`, `docs/`, `controls/` | Original documentation and informative mapping | CC BY 4.0: [docs/LICENSE.md](../docs/LICENSE.md) |
 | Firebird engine in **another repo**, including IPL/IDPL source and dependencies | Third party upstream | **Not relicensed by this repository** |

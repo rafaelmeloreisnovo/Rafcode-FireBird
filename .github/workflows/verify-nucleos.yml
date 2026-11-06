@@ -4,12 +4,14 @@ on:
     paths:
       - 'NUCLEOS/**'
       - 'audit/**'
+      - 'federation/**'
       - 'scripts/check.sh'
       - '.github/workflows/verify-nucleos.yml'
   pull_request:
     paths:
       - 'NUCLEOS/**'
       - 'audit/**'
+      - 'federation/**'
       - 'scripts/check.sh'
       - '.github/workflows/verify-nucleos.yml'
 permissions:
