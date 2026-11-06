@@ -1,26 +1,34 @@
 # Federated code/data source connection V1 — explicit, pinned, read-only
 
-**Implemented**: JSON metadata registry of exactly three source repositories pinned to immutable Git commit SHA, strict offline schema verifier, opt-in *observer* policy with disabled default, Python offline CLI to inspect or plan activation, freestanding C policy stage/commit/disable/failback, safe RFC5424 text preview.
+**Implemented**: offline three-source pinned SHA metadata registry, fail-closed policy validator, opt-in in-memory C stage/commit/disable/failback, RFC5424 syslog text preview, offline status/plan CLI. New G1 optional **one-shot** Firebird `MON$` adapter code is supplied and synthetically testable without Firebird; no database connection has yet been executed by this project.
 
-**Not implemented**: an actual Firebird connection, OS service, live automatic integration, database/cluster failover, transport syslog, network polling, SQL/Trace capture, replication, concurrent hot swap or operational monitoring. These require distinct independently reviewed adapters.
+**Not implemented**: daemon, actual Firebird database failure repro, remote I/O root cause fix, syslog transport, automatic database failover, concurrent hot swap, persistent policy, HA, service restart, recovery or scheduler.
 
 ```sh
 python3 -m federation.control status
+python3 -m federation.mon_probe status
 python3 -m federation.control plan-enable
 python3 -m federation.control plan-disable
 sh scripts/check.sh
 ```
 
-These CLI commands **do not write**, connect or enable anything. For demonstration an operator can explicitly stage+commit a validated policy using the C API; without a future runtime adapter nothing is installed.
+These commands perform **no database or network I/O**. Never enable the committed policy. For a separately authorized disposable database see [the MON$ adapter contract](ADAPTER_CONTRACT.md).
 
 ## Federation safety contract
 
-- **Source authority**: producer `Rafcode-FireBird`, external engine fork `firebird_rafcodephi`, upstream `FirebirdSQL/firebird`. SHA pins are a snapshot, not claims of current upstream HEAD.
-- **Deny by default**: policy `enabled=false`, sink `NONE`, no network, syslog transport `DISABLED`, no privileges, no secrets.
-- **Switches**: `raf_fed_stage` refuses invalid/stale/unknown policy, `raf_fed_commit` requires explicit operator acknowledgment; `raf_fed_disable` is always available; `raf_fed_failback` needs a prior known configuration and acknowledgment. These are synchronous *in-memory* states, not concurrent hot deployment.
-- **Fallback**: UNKNOWN telemetry -> NONE. Stalled/IO_ERROR -> ALERT. No fork/source/db mutation.
-- **Failover**: database failover is **NOT_IMPLEMENTED**. Separate tests for split-brain, durable acknowledgments, replicas, consistency and recovery point are mandatory before even proposing it.
-- **Syslog**: `raf_syslog_preview` emits a sanitized, bounded RFC5424-shaped frame only; no transport, hostname, timestamp, SQL, client identifiers or raw values. RFC 5424 permits '-' for absent header values; any actual TLS transport would require an independent audited adapter.
-- **Rollback**: disable observer immediately; operator-reviewed failback to the previous in-memory observer policy; revert Git branch. No database restore by this software.
+- Only sources pinned to reviewed SHA: producer `Rafcode-FireBird`, engine fork `firebird_rafcodephi`, upstream `FirebirdSQL/firebird`. Pin snapshots are not current HEAD claims.
+- Default disabled; no secret, network or service access from baseline commands.
+- C observer policy is in-memory single-threaded and never modifies DB state. `raf_fed_commit(ctx, 1)` requires explicit operator acknowledgment; `raf_fed_disable` is immediate; `raf_fed_failback(ctx,1)` changes observer configuration only.
+- Monitor `MON$` counters are snapshots, **not** proof of committed inserts, writer progress or deadlock. It is unsafe to feed them to `RAF_KNOWN_PROGRESS`.
+- Bounded RFC5424-shaped syslog preview has no transport or logging secrets.
+- Engine failover, durable failback, rollback of transactions and HA require separate independent DBA/replication tests. No automatic promotion.
 
-See [federation/AGENTS.md](AGENTS.md) and [adapter contract](ADAPTER_CONTRACT.md). Source changes from external repos are never applied automatically.
+Read [federation/AGENTS.md](AGENTS.md), [issue #9269 source-model](FORENSICS_9269.md), [operator procedure](../ops/FAILSAFE_RUNBOOK.md), and the exact CI receipt before evaluating any claim.
+
+## G1.1 disposable runtime SQL falsifier (Firebird 4 only)
+
+[Standalone exact lab script](labs/firebird4_disposable_sql_gate.py) and [completed local receipt](../receipts/2026-11-06-FB4-disposable-mon-sql.json) are reproducible offline when `isql-fb` for Firebird 4 is installed. The script accepts **no external database path**, creates its own private ephemeral DB, attempts a forbidden INSERT under READ ONLY, verifies it failed and table remains empty, prints only safe aggregates, then cleans **only its own temporary test DB**. It is not part of default CI or a live Firebird attachment. Use this evidence only for SQL/TPB Firebird4 compatibility, not for issue #9269.
+
+### Lab v2 recommended — no hardcoded environment paths
+
+Use `python3 federation/labs/firebird4_disposable_sql_gate_v2.py` (requires independently installed Firebird4 `isql-fb`), optionally `RAF_G1_RECEIPT_DIR=/existing/private/directory`. The script creates only its own random temporary database and **unique 0600 receipts** in the selected directory, fails closed if missing/unwritable, and does not overwrite prior evidence. Do not place real database credentials in commands or logs. Original v1 lab source is historical and has a ChatGPT-only output location, preserved for audit. Neither version attempts a production Firebird connection or reproduces #9269.

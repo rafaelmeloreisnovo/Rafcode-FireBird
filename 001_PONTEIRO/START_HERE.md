@@ -30,3 +30,26 @@
 - Operator: [ops/PROCEDURES.md](../ops/PROCEDURES.md) → [ops/FAILSAFE_RUNBOOK.md](../ops/FAILSAFE_RUNBOOK.md) → [ops/TIMELINE.md](../ops/TIMELINE.md) → [ops/RELEASE_NOTES.md](../ops/RELEASE_NOTES.md).
 - Data quality and documentation rules: [docs/ISO8000_QUALITY.md](../docs/ISO8000_QUALITY.md), [docs/RECONSTRUCTION.md](../docs/RECONSTRUCTION.md), [docs/PROMPT_CANONICAL.md](../docs/PROMPT_CANONICAL.md).
 - **Authority boundary:** this producer owns observer policies. [Firebird fork](https://github.com/rafaelmeloreisnovo/firebird_rafcodephi) governs engine patch branches; no automatic sync. UNKNOWN evidence -> BLOCKED, not an inferred success.
+
+## G1 source-anchored incident dispatch (2026-11-06 candidate)
+
+- Issue #9269 center: [federation/FORENSICS_9269.md](../federation/FORENSICS_9269.md) → exact pinned Firebird source cch.cpp → H1 suspension/cache writer OR H2 key/descriptor mismatch → falsifiers.
+- One-shot outer adapter: [federation/ADAPTER_CONTRACT.md](../federation/ADAPTER_CONTRACT.md) → [federation/mon_probe.py](../federation/mon_probe.py) → negative tests → exact CI receipt.
+- Observability cannot prove writes or fix engine cache; source patch and full Windows disk-full test remain separate authorized work. State is IMPLEMENTED_UNTESTED until exact source SHA and CI log readback.
+
+## Verified G1 checkpoint (2026-11-06)
+
+- Tested source `9438726c2a5a868e65957aa937e967f7e3a1967d` CI [42172109238](https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42172109238), GCC+Clang C regressions and Python 17+37 PASS scoped.
+- Root hypothesis: issue [#9269](https://github.com/FirebirdSQL/firebird/issues/9269) → [FORENSICS](../federation/FORENSICS_9269.md) → [MON$ adapter](../federation/mon_probe.py) → [receipt](../receipts/2026-11-06-MON-G1-scoped-ci.json). Real Firebird runtime `NOT_RUN`, no engine patch, DB trigger side effects `TOKEN_VAZIO`.
+- DRAFT/HOLD and denied production claims. Next: authorized disposable Firebird real instance, externally witnessed causal fault reproduction.
+
+## G1.1 source → executable → lab result (2026-11-06)
+
+- [Lab executable](../federation/labs/firebird4_disposable_sql_gate.py) byte-identical to independently executed local file at Git blob `b499384ca8a4daf693386d6d4659386d05acfd8b`.
+- [Lab receipt](../receipts/2026-11-06-FB4-disposable-mon-sql.json) Git blob `c72660bfbaa86c4ee87d8ffd8c37b9109f11d671`; read-only transaction DML rejection+zero rows verified in REAL Firebird 4.0.5 test-only database.
+- Scope **SQL/TPB syntax and behavior only**. Exact Python MON adapter executable real DB test remains `NOT_RUN`; Firebird 5 Windows disk-full #9269 H1/H2 still UNRESOLVED. Do not promote lab SQL result to engine fix, realtime monitoring or failover claim.
+
+## Portable G1.1 lab successor (2026-11-06)
+
+- **Prefer V2:** [portable independent Firebird4 lab gate](../federation/labs/firebird4_disposable_sql_gate_v2.py) Git blob `3343e65f3ac0d87a7726cd02f8191903add6c6fa`, exact executable locally tested twice (different temporary databases); output directory default current directory or `RAF_G1_RECEIPT_DIR`, exclusive append-only unique files.
+- [V2 real receipt](../receipts/2026-11-06-FB4-LAB-PORTABLE-V2.json) Git blob `72ec9d5b743568da94f17448df752378dff62122`; old V1 source & receipt retained as preceding evidence. Negative missing output dir returns exit 2, no overwrite; scope still REAL_FIREBIRD4_SQL only, not Python Firebird adapter or #9269 causal test.
