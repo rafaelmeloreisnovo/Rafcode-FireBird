@@ -11,8 +11,9 @@ for compiler in gcc clang; do
   fi
 done
 # Additional standalone C11 federation policy and RFC5424 syslog preview falsifiers.
-TMP_EXE="${TMPDIR:-/tmp}/raf_fed_ci_$"
-trap 'rm -f "$TMP_EXE"' EXIT HUP INT TERM
+TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/raf_fed_ci.XXXXXXXX")"
+TMP_EXE="$TMP_DIR/test"
+trap 'rm -rf "$TMP_DIR"' EXIT HUP INT TERM
 for compiler in gcc clang; do
   if command -v "$compiler" >/dev/null 2>&1; then
     for module in federation syslog; do
