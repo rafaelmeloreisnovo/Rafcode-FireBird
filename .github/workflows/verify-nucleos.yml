@@ -1,0 +1,29 @@
+name: scoped-nucleos-ci
+on:
+  push:
+    paths:
+      - 'NUCLEOS/**'
+      - 'audit/**'
+      - 'scripts/check.sh'
+      - '.github/workflows/verify-nucleos.yml'
+  pull_request:
+    paths:
+      - 'NUCLEOS/**'
+      - 'audit/**'
+      - 'scripts/check.sh'
+      - '.github/workflows/verify-nucleos.yml'
+permissions:
+  contents: read
+concurrency:
+  group: scoped-nucleos-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  bounded-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Compile/test offline without artifact upload or secrets
+        run: sh scripts/check.sh

@@ -1,0 +1,22 @@
+raf_id,source,control_ref,intent,implementation_route,evidence_gate,status
+RFB-001,NIST-CSF-2.0,GOVERN,Define governance and ownership,AGENTS.md,Policy review,INFORMATIVE_NOT_ASSESSED
+RFB-002,NIST-CSF-2.0,IDENTIFY,Inventory boundary and assets,docs/ARCHITECTURE.md,Inventory validation,PLANNED
+RFB-003,NIST-CSF-2.0,PROTECT,Least privilege and no service mutation,NUCLEOS/AGENTS.md,Static review,PARTIAL_IMPLEMENTED
+RFB-004,NIST-CSF-2.0,DETECT,Bounded observable progress,NUCLEOS/src/raf_guard.c,Scoped C tests,PASS_SCOPED_LOCAL
+RFB-005,NIST-CSF-2.0,RESPOND,Controlled incident escalation,docs/ROADMAP.md,Runbook drill,PLANNED
+RFB-006,NIST-CSF-2.0,RECOVER,Operator-controlled restoration only,docs/THREAT_MODEL.md,Disposable restoration drill,NOT_RUN
+RFB-007,NIST-SP-800-53-R5.2.0,AU-2,Event selection and scope,controls/NIST_CROSSWALK.csv,Audit event assessment,PLANNED
+RFB-008,NIST-SP-800-53-R5.2.0,AU-3,Content constraints and redaction,audit/receipt_chain.py,Schema and privacy review,PARTIAL_IMPLEMENTED
+RFB-009,NIST-SP-800-53-R5.2.0,AU-6,Audit record analysis and review,audit/tests/test_receipt_chain.py,Negative tests,PASS_SCOPED_LOCAL
+RFB-010,NIST-SP-800-53-R5.2.0,AU-8,Time source and UTC integrity,docs/THREAT_MODEL.md,Clock adversarial tests,PARTIAL_IMPLEMENTED
+RFB-011,NIST-SP-800-53-R5.2.0,AU-9,Protection of audit info,docs/ROADMAP.md,Signed external checkpoint,NOT_IMPLEMENTED
+RFB-012,NIST-SP-800-53-R5.2.0,AU-11,Retention and disposal governance,docs/THREAT_MODEL.md,Retention policy assessment,PLANNED
+RFB-013,NIST-SP-800-53-R5.2.0,SI-4,System monitoring without side effects,NUCLEOS/src/raf_guard.c,Live adapter review,NOT_RUN
+RFB-014,NIST-SP-800-53-R5.2.0,SI-7,Software integrity verification,audit/receipt_chain.py,External signature check,NOT_IMPLEMENTED
+RFB-015,NIST-SP-800-53-R5.2.0,CP-9,Backup validation,docs/ROADMAP.md,Backup integrity test,NOT_RUN
+RFB-016,NIST-SP-800-53-R5.2.0,CP-10,Recovery planning,docs/ROADMAP.md,Operator drill,NOT_RUN
+RFB-017,NIST-SP-800-53-R5.2.0,AC-6,Least privilege,docs/THREAT_MODEL.md,Read-only adapter permissions,NOT_IMPLEMENTED
+RFB-018,NIST-SP-800-53-R5.2.0,CM-3,Controlled change and rollback,AGENTS.md,Reviewable branch diff,PARTIAL_IMPLEMENTED
+RFB-019,NIST-SP-800-61-R3,INCIDENT-RESPONSE,Correlate detection response and recovery,docs/ROADMAP.md,Incident playbook drill,PLANNED
+RFB-020,NIST-SP-800-218,SSDF,Safe development and independent code review,AGENTS.md,Exact-head build and threat tests,PARTIAL_IMPLEMENTED
+RFB-021,NIST-SP-800-92,LOG-MANAGEMENT,Plan events collection retention and access,docs/THREAT_MODEL.md,Log governance policy assessment,PLANNED
