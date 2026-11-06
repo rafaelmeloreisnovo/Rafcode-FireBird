@@ -22,3 +22,11 @@
 - **A** adaptive: only cadence within configured bounds; never autonomous recovery.
 
 `SOURCE != ARTIFACT != EXECUTION != EVIDENCE != CLAIM`. Return R3 with each meaningful cycle.
+
+## Federation dispatch (added 2026-11-06)
+
+- Producer implementation: [federation/README.md](../federation/README.md) → exact pins [sources.v1.json](../federation/sources.v1.json) → disabled [policy.v1.json](../federation/policy.v1.json).
+- Standalone policy and syslog: [NUCLEOS/INDEX.md](../NUCLEOS/INDEX.md), then C headers, tests and CI receipt.
+- Operator: [ops/PROCEDURES.md](../ops/PROCEDURES.md) → [ops/FAILSAFE_RUNBOOK.md](../ops/FAILSAFE_RUNBOOK.md) → [ops/TIMELINE.md](../ops/TIMELINE.md) → [ops/RELEASE_NOTES.md](../ops/RELEASE_NOTES.md).
+- Data quality and documentation rules: [docs/ISO8000_QUALITY.md](../docs/ISO8000_QUALITY.md), [docs/RECONSTRUCTION.md](../docs/RECONSTRUCTION.md), [docs/PROMPT_CANONICAL.md](../docs/PROMPT_CANONICAL.md).
+- **Authority boundary:** this producer owns observer policies. [Firebird fork](https://github.com/rafaelmeloreisnovo/firebird_rafcodephi) governs engine patch branches; no automatic sync. UNKNOWN evidence -> BLOCKED, not an inferred success.

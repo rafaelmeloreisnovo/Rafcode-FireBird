@@ -44,3 +44,9 @@ Keep typed relations among `source -> artifact -> test -> receipt -> claim`, sup
 A PR must show exact scoped diff, license, regression hazards, falsifiers, readback, run commands, test failures, unfinished gates, privacy impact, claim_allowed and rollback. Favor a draft over an unverified merge.
 
 End with `R3=<F_ok,F_gap,F_next>`. `F_ok` states only observable completed work; `F_gap` records unknowns and risks; `F_next` is the smallest safe reversible action. No background execution is implied.
+
+## 7. Federation amendment — v1
+
+Before touching any `federation/` or `NUCLEOS/raf_federation*` file: read [federation/AGENTS.md](federation/AGENTS.md), [adapter contract](federation/ADAPTER_CONTRACT.md) and [operations runbook](ops/FAILSAFE_RUNBOOK.md). No mutable Git refs, no network fetch by default, no SQL, IP, client telemetry or credential. `plan-enable` is NOT live activation. `raf_fed_commit` controls only volatile observer policy and requires explicit acknowledgment. `disable` always wins. Only synthetic syslog preview is implemented, no external transport. All actual DB failover, failback, hot swap, rollback and repair require a separately audited operator-run procedure with integration evidence.
+
+Every source-code behavior change must update adjacent PRE/POST comments, contract version and falsifiers in the same PR. Comments are documentation **but not independent evidence**; code and tests must agree. Check [ops/PROCEDURES.md](ops/PROCEDURES.md) for role boundaries, chronological timeline, deadlines (planning targets only) and evidence promotion. ISO 8000 quality references inform data process maturity, not automatic certification.
