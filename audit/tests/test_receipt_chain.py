@@ -1,7 +1,9 @@
 # SPDX-License-Identifier: MIT
 import json
 import unittest
-from audit.receipt_chain import ROOT, ReceiptError, make_synthetic, verify_lines, digest
+import tempfile
+from pathlib import Path
+from audit.receipt_chain import ROOT, ReceiptError, make_synthetic, verify_lines, verify_path, digest
 
 def frame(obj):
     return (json.dumps(obj, separators=(",", ":"), sort_keys=True) + "\n").encode("utf-8")
@@ -74,6 +76,32 @@ class VerifyTest(unittest.TestCase):
     def test_empty(self):
         with self.assertRaises(ReceiptError):
             verify_lines([])
+
+    def test_invalid_enum_types_fail_closed(self):
+        for key, replacement in (("kind", []), ("state", {}), ("execution", [])):
+            x = dict(self.a)
+            x[key] = replacement
+            x["sha256"] = digest(x)
+            with self.subTest(key=key), self.assertRaises(ReceiptError):
+                verify_lines([frame(x)])
+
+    def test_invalid_calendar_date(self):
+        x = dict(self.a, ts_utc="2026-99-99T99:99:99Z")
+        x["sha256"] = digest(x)
+        with self.assertRaises(ReceiptError):
+            verify_lines([frame(x)])
+
+    def test_nonfinite_json_constant(self):
+        raw = frame(self.a).decode().replace('"claim_allowed":false', '"claim_allowed":NaN')
+        with self.assertRaises(ReceiptError):
+            verify_lines([raw.encode()])
+
+    def test_bounded_path_rejects_large_line(self):
+        with tempfile.TemporaryDirectory() as directory:
+            p = Path(directory) / "oversize.jsonl"
+            p.write_bytes(b"x" * 20000 + b"\\n")
+            with self.assertRaises(ReceiptError):
+                verify_path(p)
 
 if __name__ == "__main__":
     unittest.main()
