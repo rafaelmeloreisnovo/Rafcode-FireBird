@@ -31,3 +31,7 @@ Live monitoring adapter, background service, automatic failover, persistent hot 
 ## G1 test receipt — 2026-11-06 (no runtime release)
 
 Exact tested code `9438726c2a5a868e65957aa937e967f7e3a1967d`, [CI 42172109238](https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42172109238) succeeded. 37 Python federation + 17 Python audit tests, plus GCC/Clang C G0/G1 regressions. Fixed a test fixture path, blocked false success for UNKNOWN and narrowed misleading `database_mutations=0` to `adapter_write_statements_issued=0`. Firebird's database event triggers may write on connection; no live DB was touched. Parent trial failure 42171784931 is preserved in timeline; current G1 is PASS_SCOPED_CI only. No merge, no live driver installation, no HA or disk-full recovery claim.
+
+## G1.1 lab evidence supplement — 2026-11-06 (still unreleased)
+
+A real embedded Firebird 4.0.5 engine on Linux x86_64 executed the same fixed MON$ aggregate SELECT used by the optional probe. A temporary-db READ ONLY TPB rejected INSERT with SQLSTATE 42000, subsequent rollback and COUNT(*) verified zero rows. Evidence JSON and exact executed script are committed as Git blobs under `receipts/` and `federation/labs/`. The self-hash detects accidental changes only; it does not authenticate observer identity or execution. Code of `mon_probe.py` was NOT exercised against real engine, Firebird 5.0 #9269 remains UNRESOLVED; no release/merge.

@@ -24,3 +24,7 @@ These commands perform **no database or network I/O**. Never enable the committe
 - Engine failover, durable failback, rollback of transactions and HA require separate independent DBA/replication tests. No automatic promotion.
 
 Read [federation/AGENTS.md](AGENTS.md), [issue #9269 source-model](FORENSICS_9269.md), [operator procedure](../ops/FAILSAFE_RUNBOOK.md), and the exact CI receipt before evaluating any claim.
+
+## G1.1 disposable runtime SQL falsifier (Firebird 4 only)
+
+[Standalone exact lab script](labs/firebird4_disposable_sql_gate.py) and [completed local receipt](../receipts/2026-11-06-FB4-disposable-mon-sql.json) are reproducible offline when `isql-fb` for Firebird 4 is installed. The script accepts **no external database path**, creates its own private ephemeral DB, attempts a forbidden INSERT under READ ONLY, verifies it failed and table remains empty, prints only safe aggregates, then cleans **only its own temporary test DB**. It is not part of default CI or a live Firebird attachment. Use this evidence only for SQL/TPB Firebird4 compatibility, not for issue #9269.

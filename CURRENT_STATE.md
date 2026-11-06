@@ -40,3 +40,11 @@
 - **Safety**: default policy OFF, operator ACK + disposable env declaration; explicit read-only TPB, rollback/close, bounded child timeout, no engine writes by adapter code. Firebird ON CONNECT/DISCONNECT triggers can have side effects outside read-only transaction => **database unchanged cannot be claimed**.
 - **G2/G3/G4**: OS-level hang reproducer, engine fix and independent attestations BLOCKED by missing runtime/authoritative evidence. `claim_allowed=false`, `merge_allowed=false`.
 - **Receipt**: [G1 scoped CI](receipts/2026-11-06-MON-G1-scoped-ci.json); previous `F0` evidence preserved. R3 next: disposable runtime probe & exact #9269 causal witness before any engine modification.
+
+## G1.1 REAL disposable Firebird 4.0 SQL check — 2026-11-06 (scope boundary)
+
+- **Independent lab executable source**: `federation/labs/firebird4_disposable_sql_gate.py`, Git blob `b499384ca8a4daf693386d6d4659386d05acfd8b`, byte-identical to script executed locally. 
+- **Local execution**: Linux x86_64 / Firebird LI-V4.0.5.3140 embedded against *new ephemeral private test database*, query `MON$DATABASE` LEFT JOIN `MON$IO_STATS` success; `MON$PAGE_SIZE=8192`, `MON$PAGE_READS=86`, `MON$PAGE_WRITES=3` in one snapshot. `SET TRANSACTION READ ONLY READ COMMITTED RECORD_VERSION` refused DML ("attempted update during read-only transaction"), post-rollback COUNT=0. 
+- **Receipt**: `receipts/2026-11-06-FB4-disposable-mon-sql.json`, Git blob `c72660bfbaa86c4ee87d8ffd8c37b9109f11d671`, byte-identical to locally generated JSON. Self hash `f6cc410869535a136a5566ff9c100200142ece99e501b3cf6cc16915d31c5294`, NOT signed or independently anchored.
+- **LIMITS**: This is a *real Firebird 4 SQL/TPB check*, NOT runtime execution of the `federation/mon_probe.py` Python driver (not installed), NOT Firebird 5.0.3/5.0.4 Windows #9269 reproduction, NOT a cause/fix/HA claim. ON CONNECT trigger risk in arbitrary DB still applies; new disposable test DB only. 
+- **G1.1**: `PASS_SCOPED_FIREBIRD4_SQL`; G1.2 actual Python driver/runtime and G2 Windows fault still `NOT_RUN`. Existing GitHub synthetic G1 CI remains independent; no production connection, no engine patch, no merge, `claim_allowed=false`.

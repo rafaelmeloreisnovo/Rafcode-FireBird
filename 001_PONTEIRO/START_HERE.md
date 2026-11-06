@@ -42,3 +42,9 @@
 - Tested source `9438726c2a5a868e65957aa937e967f7e3a1967d` CI [42172109238](https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42172109238), GCC+Clang C regressions and Python 17+37 PASS scoped.
 - Root hypothesis: issue [#9269](https://github.com/FirebirdSQL/firebird/issues/9269) → [FORENSICS](../federation/FORENSICS_9269.md) → [MON$ adapter](../federation/mon_probe.py) → [receipt](../receipts/2026-11-06-MON-G1-scoped-ci.json). Real Firebird runtime `NOT_RUN`, no engine patch, DB trigger side effects `TOKEN_VAZIO`.
 - DRAFT/HOLD and denied production claims. Next: authorized disposable Firebird real instance, externally witnessed causal fault reproduction.
+
+## G1.1 source → executable → lab result (2026-11-06)
+
+- [Lab executable](../federation/labs/firebird4_disposable_sql_gate.py) byte-identical to independently executed local file at Git blob `b499384ca8a4daf693386d6d4659386d05acfd8b`.
+- [Lab receipt](../receipts/2026-11-06-FB4-disposable-mon-sql.json) Git blob `c72660bfbaa86c4ee87d8ffd8c37b9109f11d671`; read-only transaction DML rejection+zero rows verified in REAL Firebird 4.0.5 test-only database.
+- Scope **SQL/TPB syntax and behavior only**. Exact Python MON adapter executable real DB test remains `NOT_RUN`; Firebird 5 Windows disk-full #9269 H1/H2 still UNRESOLVED. Do not promote lab SQL result to engine fix, realtime monitoring or failover claim.
