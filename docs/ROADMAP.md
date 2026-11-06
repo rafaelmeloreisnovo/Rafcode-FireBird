@@ -27,3 +27,7 @@ Target dates are coordination proposals, not commitments, release dates or evide
 ### F1.1 — subgate (2026-11-06 candidate, no live execution)
 
 Implement single-process-isolated Firebird MON$ snapshot over fresh read-only transaction, mock driver error/timeout tests and no private data. **Done at source level only**; actual sandbox readback / latency / privileged signal semantics remain gates F1.2 and F2. Deadlines are targets and not promises.
+
+### H2 causal gate (before engine patch; library API reviewed, runtime unknown)
+
+Verify the exact DHP MichaelKVList map lifecycle; model/cache-log one unsafe interleaving in a disposable Windows #9269 reproducer, then show an atomic fix under concurrency stress. **Do not** use `erase_with` as key+pointer identity predicate because it must preserve key ordering; `erase(key,Func)` callback does not veto deletion. Future test must cover `CDS_UNAVAILABLE` and DHP-enabled builds. Target=after G2 witness, date=TOKEN_VAZIO.

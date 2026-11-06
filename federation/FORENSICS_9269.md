@@ -47,3 +47,22 @@ Never recreate disk exhaustion on a production volume, restart the engine autono
 - Engine source at SHA: https://github.com/rafaelmeloreisnovo/firebird_rafcodephi/blob/f78dbc4e500e8896a4004dd2fb7d7a94785e54df/src/jrd/cch.cpp
 
 **Additional observability confounder:** Firebird database event triggers (ON CONNECT/ON DISCONNECT) run in their own transactions, so even an explicitly read-only monitoring transaction cannot certify the entire *attachment lifecycle* had no DB effects. Source: https://www.firebirdsql.org/file/documentation/html/en/refdocs/fblangref50/firebird-50-language-reference.html . Gate requires disposable test DB and trigger audit.
+
+## H2 negative design gate — exact vendored libcds contract review (2026-11-06)
+
+Before suggesting a cache-hash hotfix, inspect upstream Firebird's bundled `extern/libcds/cds/container/impl/michael_kvlist.h` at source SHA `f78dbc4e500e8896a4004dd2fb7d7a94785e54df`, Git blob `c7252d8e4b7cd6410fab7f011aa82137af065bf1` (Boost Software License 1.0, **read only**):
+https://github.com/FirebirdSQL/firebird/blob/f78dbc4e500e8896a4004dd2fb7d7a94785e54df/extern/libcds/cds/container/impl/michael_kvlist.h
+
+**Observed API constraints** (read exact vendor code, not invented capabilities):
+- `MichaelKVList::erase(key)` delegates to `erase_at(head(),key,intrusive_key_comparator())`. It is keyed deletion; it does not check `mapped_type` (here `BufferDesc*`) as a precondition.
+- `erase_with(key,Less)` changes the **key-order search comparator**. Its documentation requires `Less` to preserve the same ordering used to construct the list. Replacing that comparator with a pointer-identity predicate would break the ordered-list contract and may introduce harder concurrency defects.
+- `erase(key, Func)` calls a callback for the found element **as it deletes it**; this is not a documented conditional veto. Printing/asserting the descriptor in the callback does not prevent deleting the wrong key association.
+- `extract(key)` also unlinks the key before yielding a guarded pointer; post-extraction equality checking is not an atomic compare-before-erase.
+
+**Negative gate:** do not merge any proposed `erase_with`/callback-based key+descriptor hotfix absent a verified, atomic, value-conditional removal primitive or independently proven synchronization mechanism for DHP/hazard pointers. This is a **constraint on proposed fixes**, not proof that the existing key-only erase caused #9269. The exact concurrency interleaving and version-specific behavior remain `TOKEN_VAZIO`.
+
+### Minimal evidence demanded for future H2 engine patch
+
+Instrument only a disposable TEST build, disabled by default: `page-key`, `BufferDesc` identity, generation if available, hash slot transition, writer suspension state and thread/synchronization order. Avoid collecting page contents or user data. Show a deterministic interleaving that violates `hash_entry(page).descriptor.page==page`, then an independently checked non-regression trace under concurrent read/insert/eviction and memory-reclamation tests. Run both CDS and non-CDS code paths, Windows and a second platform, with sanitizers where supported. Without that: `IMPLEMENTED_UNTESTED` at most, `claim_allowed=false`.
+
+Source-level finding `PASS_SOURCE_REVIEW_SCOPED`; integrated Firebird build, libcds concurrency test, Windows #9269 fault replay all `NOT_RUN`.

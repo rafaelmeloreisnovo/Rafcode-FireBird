@@ -35,3 +35,7 @@ Exact tested code `9438726c2a5a868e65957aa937e967f7e3a1967d`, [CI 42172109238](h
 ## G1.1 lab evidence supplement — 2026-11-06 (still unreleased)
 
 A real embedded Firebird 4.0.5 engine on Linux x86_64 executed the same fixed MON$ aggregate SELECT used by the optional probe. A temporary-db READ ONLY TPB rejected INSERT with SQLSTATE 42000, subsequent rollback and COUNT(*) verified zero rows. Evidence JSON and exact executed script are committed as Git blobs under `receipts/` and `federation/labs/`. The self-hash detects accidental changes only; it does not authenticate observer identity or execution. Code of `mon_probe.py` was NOT exercised against real engine, Firebird 5.0 #9269 remains UNRESOLVED; no release/merge.
+
+## #9269 H2 prevention gate — vendor libcds API reviewed
+
+Pinned Firebird vendor `MichaelKVList` API shows `erase_with` is a key-order comparator, not atomic key+value compare-and-delete, and `erase(key, Func)` is not an action veto. Reject naive pointer-aware comparator/erase callback patches pending a value-conditional removal or proved synchronization design. Forensics doc specifies the falsifying race schedule; no engine patch or libcds runtime test claimed.
