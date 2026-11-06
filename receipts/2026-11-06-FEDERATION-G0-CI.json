@@ -1,0 +1,65 @@
+{
+  "schema": "rafcode-federation-g0-ci-v1",
+  "event_id": "MU-RAFCODE-FIREBIRD-FEDERATION-G0-20261106-S1",
+  "date_utc": "2026-11-06",
+  "parent_event": "MU-RAF-FIREBIRD-PRODUCER-G0-CI-20261106-S1",
+  "producer": "rafaelmeloreisnovo/Rafcode-FireBird",
+  "branch": "feat/federation-optin-syslog-failsafe-v1",
+  "source_tested_commit": "a708a0add36b46cd38defff01a64d510039159d5",
+  "parent_commit": "3415debe4250970a7a02fc83ce8dbf5ec1f2e96b",
+  "evidence": {
+    "github_run_id": 42168907060,
+    "github_run_url": "https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42168907060",
+    "github_job_id": 127731849705,
+    "status": "completed",
+    "conclusion": "success",
+    "compiler_matrix": [
+      "gcc",
+      "clang"
+    ],
+    "per_compiler": {
+      "raf_guard_assertions": 30041,
+      "raf_gate_checks": 10028,
+      "raf_federation_checks": 50026,
+      "raf_syslog_checks": 20008
+    },
+    "synthetic_cycles": 10000,
+    "audit_unittests": 17,
+    "federation_unittests": 14,
+    "offline_cli": [
+      "validate",
+      "status",
+      "plan-enable",
+      "plan-disable"
+    ],
+    "default_enabled": false,
+    "auto_recovery": false,
+    "auto_failover": false,
+    "syslog_packets_sent": 0,
+    "database_mutations": 0,
+    "firebird_live_adapter": "NOT_IMPLEMENTED",
+    "database_e2e": "NOT_RUN",
+    "independent_auditor": "NOT_RUN"
+  },
+  "gates": {
+    "F0": "PASS_SCOPED_CI",
+    "F1": "NOT_IMPLEMENTED",
+    "F2": "NOT_RUN",
+    "F3": "NOT_IMPLEMENTED",
+    "F4": "NOT_IMPLEMENTED",
+    "privacy_live_review": "NOT_RUN",
+    "external_anchor": "NOT_IMPLEMENTED",
+    "source_licence_review": "SCOPED"
+  },
+  "known_limitations": [
+    "Only synthetic policy and RFC5424 preview; no syslog transport, service activation or real Firebird integration",
+    "Source registry pins commit snapshots; does not prove newest upstream state",
+    "Freestanding code was tested in hosted Linux runners; ARM/Windows hardware not run",
+    "CRC32 and SHA256-only unanchored audit receipts are not authentication",
+    "CI cannot establish durability, replication, HA, ISO conformity or absence of all risks"
+  ],
+  "claim_allowed": false,
+  "merge_allowed": false,
+  "rollback": "Revert dedicated federation commits, or disable observer policy; never mutate the Firebird DB",
+  "next": "Design separate opt-in read-only MON$ adapter with limited privileges, isolated disposable database and negative privacy tests"
+}

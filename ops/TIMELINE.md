@@ -11,3 +11,5 @@
 | TBD | F3/F4 TLS syslog / actual HA | Independent review required | TOKEN_VAZIO |
 
 Use `supersedes: event-id` for later correction; do not erase prior rows. Exact GitHub Actions run, tests and compiler labels must be appended from actual readback, never guessed.
+
+| 2026-11-06 | Federation synthetic gate G0 exact code HEAD `a708a0add36b46cd38defff01a64d510039159d5` | [Actions 42168907060](https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42168907060); job 127731849705 | PASS_SCOPED_CI |

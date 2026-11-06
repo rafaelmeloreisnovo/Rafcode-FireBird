@@ -15,3 +15,8 @@ Engine: **unchanged**. No schema migration, no database connection. `main` uncha
 Live monitoring adapter, background service, automatic failover, persistent hot swap, syslog TLS transport, private logs, backups, authenticating signed checkpoints, deployed rollback, or ISO/NIST certification. All are `NOT_IMPLEMENTED/NOT_RUN`.
 
 **Version is a proposal label, not a GitHub Release/tag or independently certified package.** No publication or merge without human review.
+
+## Test receipt appended (2026-11-06; no release/tag)
+
+- [Scoped CI execution](https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42168907060) for `a708a0add36b46cd38defff01a64d510039159d5` succeeded: guard 30041, gate 10028, federation 50026, syslog 20008 checks per GCC/Clang build; 17 audit + 14 federation Python tests.
+- Failure of hidden telemetry or unknown fields must suppress action; test environment has zero DB interactions. Still **unreleased**, unmerged, no Firebird E2E.
