@@ -1,27 +1,32 @@
-# Firebird adapter contract, design only — no runtime executable yet
 
-**Objective**: optional connector that samples Firebird monitoring capabilities without modifying Firebird source, transactions or configuration.
+# G1 — Firebird monitoring adapter contract (implemented opt-in one-shot; no real DB test)
 
-## Permitted signals (future implementation)
+The G1 **optional outer adapter** is `federation/mon_probe.py`. It uses the third-party Firebird Python driver only when independently installed and exactly version `2.1.2` (PyPI 2026-10-31; see https://pypi.org/project/firebird-driver/). This is not C freestanding and is never linked into the C observer. No automatic installs, background tasks, service modification or network transport.
 
-- Snapshot of safe aggregate counters via a **fresh short read-only transaction** for each observation. Firebird monitoring tables MON$ are snapshot-bound per transaction; reusing a long-lived transaction can show stale values.
-- Firebird Trace API only after explicit administrator/user authorization and privacy review. Trace can contain SQL/parameters and identifiers; **do not enable by default**, do not capture statement bodies, and validate the version-specific privileges.
-- Process-level CPU/availability indicators only when separately authorized, with bounded overhead and no privileged hooks.
+Actual code: one fixed SQL SELECT over `MON$DATABASE` plus `MON$IO_STATS`, fresh Firebird `TraAccessMode.READ` transaction, immediate `rollback()` and `close()`, child process supervised with deadline. No SQL text of clients, logins, DSNs, IPs, database paths, row payloads, IDs, free-form error messages or database mutations in stdout.
 
-## Required adapter guarantees
+**Operator only, for a confirmed disposable Firebird database with independent least-privilege account** (an environment assertion cannot prove disposal):
+1. Independently provision a disposable database and an observer account, inspect security policy.
+2. Independently audit/install optional driver `firebird-driver==2.1.2` and system `fbclient`. Neither is installed by CI.
+3. Review policy; prepare a separate copy with `enabled=true`, `sink=PREVIEW`, monotonic revision; do not edit the committed default-off policy.
+4. Put `RAF_FB_DISPOSABLE=1`, `RAF_FB_DSN`, `RAF_FB_USER`, `RAF_FB_PASSWORD` in a non-public operator environment (not in a script, issue or workflow).
+5. Execute a single opt-in invocation:
+   ```sh
+   python3 -m federation.mon_probe status
+   python3 -m federation.mon_probe once --ack --policy /path/to/private-enabled-policy.json --deadline 6
+   ```
+6. Treat `MON_SNAPSHOT` as **only** a readable metadata snapshot. It cannot certify healthy writes. On `UNKNOWN` / `DEADLINE_EXCEEDED` / `OBSERVATION_FAILED`, stop and investigate; no automatic retries or recovery.
 
-`provider_id | pinned_adapter_version | schema_version | monotonic_tick | known_mask | progress_count | io_error | observed_at_source | trust_level`; no raw SQL, addresses, credentials, row/record content, BLOBs. Producer defines typed omissions, no fake 0.
+The parent process kills/reaps the child on timeout. This does NOT guarantee that a server-side statement has been fully cancelled immediately. The outgoing JSON has `writer_progress_known=false` and `database_mutations=0` as a declaration of adapter scope, not independent proof of engine state.
 
-If adapter lacks a trustworthy progress counter, return `UNKNOWN` and no alert that claims deadlock. On loss of connectivity, disable outgoing telemetry or emit bounded UNKNOWN status; **never** restart Firebird, reconnect infinitely, or alter the DB.
+## Non-features explicitly held
 
-Integration and deactivation must be opt-in, with least privileges, quotas, health deadlines, cached last-known-good config and explicit operator acceptance. Config swaps require adapter-specific synchronization and rollback because the current freestanding policy state machine is single-threaded.
+Live background monitor, syslog transport, automatic failover/failback of DB, persistent config/hot-swap, backup/restore, thread inspection, Firebird source edits and issue #9269 root-cause proof = `NOT_IMPLEMENTED/NOT_RUN`. The C observer cannot treat MON$ page counters as successful user operation progress.
 
-## Rollback, failback and failover boundaries
+## Fail-safe, rollback, falsifiers
 
-- Rollback (Git): revert adapter code/config in a separate branch.
-- Failback (observer): restore last known safe observer policy after operator review.
-- Fallback (telemetry): bounded local preview or stop, never change DB routing.
-- Hot swap (observer): **NOT_IMPLEMENTED**; requires serialized atomic publish, safe resource handoff and concurrency tests.
-- Failover (database): **NOT_IMPLEMENTED**; must test transactional safety, split-brain fencing, durable commit and RPO/RTO before an operator-run procedure can be proposed.
+Default policy is `enabled=false`. Invalid policy, stale source, missing ACK, missing disposable declaration, missing credentials, unrecognized driver, malformed snapshot or child timeout => **no promoted observation**; known field omission remains `null`, not zero. Rollback = stop one-shot invocation, discard private policy and stay default-off; no DB changes.
 
-No inference that an observer action repairs Firebird upstream #9269. For a real reproducer use a disposable volume and strict timeout.
+Synthetic negative tests in `federation/tests/test_mon_probe.py` inject fake clients and verify explicit read-only TPB, exactly one allowlisted SELECT, rollback/close, no credential echo, bounded child timeout, schema guards, malformed data rejection and false progress suppression. **These do not substitute Firebird live test evidence.**
+
+Related forensic hypotheses: [FORENSICS_9269](FORENSICS_9269.md).

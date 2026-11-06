@@ -20,3 +20,10 @@ Live monitoring adapter, background service, automatic failover, persistent hot 
 
 - [Scoped CI execution](https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42168907060) for `a708a0add36b46cd38defff01a64d510039159d5` succeeded: guard 30041, gate 10028, federation 50026, syslog 20008 checks per GCC/Clang build; 17 audit + 14 federation Python tests.
 - Failure of hidden telemetry or unknown fields must suppress action; test environment has zero DB interactions. Still **unreleased**, unmerged, no Firebird E2E.
+
+## G1 — opt-in monitoring probe candidate (unreleased, stacked branch)
+
+- Added `federation/mon_probe.py` with explicit operator ACK, validated enabled-preview policy and disposable environment, a single isolated read-only `MON$` snapshot, transaction rollback/close, bounded child deadline and sanitized public output.
+- Added adversarial fake-driver tests, [forensic issue #9269 model](../federation/FORENSICS_9269.md), source references and updated adapter contract.
+- No Firebird engine source touched, no DB connection ever performed by CI, no dependency installed, no syslog transport or autonomous recovery.
+- Exact-head CI and readback to be appended only after verified run. Until then `IMPLEMENTED_UNTESTED`, `claim_allowed=false`, `merge_allowed=false`.

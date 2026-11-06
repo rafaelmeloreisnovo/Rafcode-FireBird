@@ -23,3 +23,7 @@ No fixed delivery times; no auto actions, merges, releases, destructive cleanup 
 | F4 | TBD, gated | real HA failover/hot-swap proposals | RPO/RTO, split-brain fencing and operator review |
 
 Target dates are coordination proposals, not commitments, release dates or evidence of completion. If dependency absent: deadline state `BLOCKED`; no invented milestone.
+
+### F1.1 — subgate (2026-11-06 candidate, no live execution)
+
+Implement single-process-isolated Firebird MON$ snapshot over fresh read-only transaction, mock driver error/timeout tests and no private data. **Done at source level only**; actual sandbox readback / latency / privileged signal semantics remain gates F1.2 and F2. Deadlines are targets and not promises.

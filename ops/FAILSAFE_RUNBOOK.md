@@ -36,3 +36,9 @@ Output is **proposal-only**, no files modified, no system activity started. The 
 
 ## Acceptance, exit and receipt
 Exit only after exact-head build + adversarial checks, privacy review, independent evidence and rollback test. Otherwise `IMPLEMENTED_UNTESTED` or `PASS_SCOPED` and `claim_allowed=false`. Receipt: base, head, actor role, action, data classification, test commands, exit codes, result, gaps, reversal.
+
+## G1 observer extension (one-shot only)
+
+Default command `python3 -m federation.mon_probe status` is offline. `once` cannot run without an independently prepared enabled-preview policy, `--ack`, `RAF_FB_DISPOSABLE=1`, a disposable DB connection and an installed exact-version optional Firebird driver. This is an **operator-run** snapshot, not a persistent switch. In a hung engine, snapshot timeout is plausible and must be recorded as UNKNOWN rather than a false diagnosis.
+
+To stop: do not issue further one-shot commands; keep committed policy disabled. No Firebird data, server config, users or service touched by our implementation.

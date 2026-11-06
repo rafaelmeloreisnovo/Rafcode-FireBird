@@ -30,3 +30,9 @@
 - Operator: [ops/PROCEDURES.md](../ops/PROCEDURES.md) → [ops/FAILSAFE_RUNBOOK.md](../ops/FAILSAFE_RUNBOOK.md) → [ops/TIMELINE.md](../ops/TIMELINE.md) → [ops/RELEASE_NOTES.md](../ops/RELEASE_NOTES.md).
 - Data quality and documentation rules: [docs/ISO8000_QUALITY.md](../docs/ISO8000_QUALITY.md), [docs/RECONSTRUCTION.md](../docs/RECONSTRUCTION.md), [docs/PROMPT_CANONICAL.md](../docs/PROMPT_CANONICAL.md).
 - **Authority boundary:** this producer owns observer policies. [Firebird fork](https://github.com/rafaelmeloreisnovo/firebird_rafcodephi) governs engine patch branches; no automatic sync. UNKNOWN evidence -> BLOCKED, not an inferred success.
+
+## G1 source-anchored incident dispatch (2026-11-06 candidate)
+
+- Issue #9269 center: [federation/FORENSICS_9269.md](../federation/FORENSICS_9269.md) → exact pinned Firebird source cch.cpp → H1 suspension/cache writer OR H2 key/descriptor mismatch → falsifiers.
+- One-shot outer adapter: [federation/ADAPTER_CONTRACT.md](../federation/ADAPTER_CONTRACT.md) → [federation/mon_probe.py](../federation/mon_probe.py) → negative tests → exact CI receipt.
+- Observability cannot prove writes or fix engine cache; source patch and full Windows disk-full test remain separate authorized work. State is IMPLEMENTED_UNTESTED until exact source SHA and CI log readback.
