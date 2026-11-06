@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from datetime import datetime
 from pathlib import Path
 
 DOMAIN = b"RAFCODE-FIREBIRD-AUDIT-V1\x00"
@@ -50,15 +51,21 @@ def validate(obj, expected_seq, parent):
         raise ReceiptError("broken parent chain")
     if not isinstance(obj["sha256"], str) or not SHA.fullmatch(obj["sha256"]):
         raise ReceiptError("invalid sha256")
-    if obj["sha256"] != digest(obj):
-        raise ReceiptError("digest mismatch")
     for field in ("id", "source", "artifact", "evidence", "gap"):
         if not isinstance(obj[field], str) or not LABEL.fullmatch(obj[field]):
             raise ReceiptError("invalid opaque label: " + field)
     if not isinstance(obj["ts_utc"], str) or not TIMESTAMP.fullmatch(obj["ts_utc"]):
         raise ReceiptError("noncanonical UTC timestamp")
+    if any(not isinstance(obj[field], str) for field in ("kind", "state", "execution")):
+        raise ReceiptError("nonstring enum")
     if obj["kind"] not in KINDS or obj["state"] not in STATES or obj["execution"] not in EXECUTIONS:
         raise ReceiptError("unknown enum")
+    try:
+        datetime.strptime(obj["ts_utc"], "%Y-%m-%dT%H:%M:%SZ")
+    except ValueError as exc:
+        raise ReceiptError("invalid UTC date") from exc
+    if obj["sha256"] != digest(obj):
+        raise ReceiptError("digest mismatch")
     if obj["claim_allowed"] is not False:
         raise ReceiptError("unauthorized claim: requires external assessment")
     if obj["state"] == "PASS_SCOPED" and (obj["execution"] != "EXECUTED" or obj["evidence"] == "TOKEN_VAZIO"):
@@ -73,8 +80,9 @@ def verify_lines(lines):
         if not isinstance(raw, bytes) or not raw.endswith(b"\n") or len(raw) > MAX_LINE:
             raise ReceiptError("oversized / truncated frame")
         try:
-            record = json.loads(raw.decode("utf-8"), object_pairs_hook=no_duplicates)
-        except (ValueError, UnicodeError, TypeError) as exc:
+            record = json.loads(raw.decode("utf-8"), object_pairs_hook=no_duplicates,
+                                parse_constant=lambda value: (_ for _ in ()).throw(ReceiptError("nonfinite JSON constant")))
+        except (ValueError, UnicodeError, TypeError, RecursionError) as exc:
             raise ReceiptError("invalid JSON") from exc
         validate(record, count + 1, previous)
         count += 1
@@ -84,8 +92,16 @@ def verify_lines(lines):
     return count, previous
 
 def verify_path(path):
+    def bounded_read(handle):
+        while True:
+            raw = handle.readline(MAX_LINE + 1)
+            if not raw:
+                return
+            if len(raw) > MAX_LINE or not raw.endswith(b"\n"):
+                raise ReceiptError("oversized / truncated frame")
+            yield raw
     with Path(path).open("rb") as handle:
-        return verify_lines(handle)
+        return verify_lines(bounded_read(handle))
 
 def make_synthetic(seq, prev, *, state="NOT_RUN", execution="NOT_RUN", evidence="TOKEN_VAZIO", kind="TEST"):
     """Build an in-memory test frame; NEVER auto-write to an external audit ledger."""
