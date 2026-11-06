@@ -1,0 +1,56 @@
+{
+  "schema": "rafcode-firebird-g0-receipt-v1",
+  "id": "MU-RAF-FIREBIRD-PRODUCER-G0-CI-20261106-S1",
+  "current_date_utc": "2026-11-06",
+  "repo": "rafaelmeloreisnovo/Rafcode-FireBird",
+  "branch": "feat/nist-governance-audit-kernels-v1",
+  "baseline_commit": "b4f7d8601203dbc2426a6db49db92bee40fc3077",
+  "exact_tested_source_head": "8abc739695b24c59e5191aecb957ecace5764f44",
+  "evidence": {
+    "actions_run_id": 42166276154,
+    "actions_url": "https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42166276154",
+    "job_id": 127723383517,
+    "job_conclusion": "success",
+    "workflow": "scoped-nucleos-ci",
+    "compiler_tests": [
+      {
+        "compiler": "gcc",
+        "guard_assertions": 30041,
+        "gate_checks": 10028
+      },
+      {
+        "compiler": "clang",
+        "guard_assertions": 30041,
+        "gate_checks": 10028
+      }
+    ],
+    "python_unittests": 17,
+    "test_failures_observed": 0,
+    "firebird_e2e": "NOT_RUN",
+    "actions_artifact_upload": "NONE_IN_WORKFLOW"
+  },
+  "states": {
+    "freestanding_scoped_build_and_synthetic_tests": "PASS_SCOPED_CI",
+    "firebird_remote_integration": "NOT_RUN",
+    "disk_full_issue_9269": "NOT_RUN",
+    "privacy_and_data_integrity_production": "NOT_RUN",
+    "cryptographically_signed_external_checkpoint": "NOT_IMPLEMENTED",
+    "independent_nist_assessment": "NOT_RUN",
+    "claims_nist_certified": false,
+    "claim_allowed": false,
+    "merge_allowed": false
+  },
+  "provenance": {
+    "origin": "producer exact-head GitHub Actions logs",
+    "prior_issue": "malformed enum TypeError corrected in separate commits",
+    "frame_crc": "INTEGRITY_ONLY_NOT_AUTHENTICATION",
+    "chain_sha256": "UNANCHORED_NOT_AUTHENTICATION"
+  },
+  "rollback": "revert feature branch commits, preserve base main; no Firebird database changes",
+  "next": "review branch diff, produce opt-in read-only adapter spec, test Firebird only in disposable isolated DB",
+  "limitations": [
+    "G0 is a scoped test suite, not a Firebird engine or NIST assessment",
+    "No signed/anchored receipts and no production database access",
+    "CI logs are provider evidence; not an independent auditor's certification"
+  ]
+}
