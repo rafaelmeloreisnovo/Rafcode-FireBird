@@ -48,3 +48,11 @@
 - **Receipt**: `receipts/2026-11-06-FB4-disposable-mon-sql.json`, Git blob `c72660bfbaa86c4ee87d8ffd8c37b9109f11d671`, byte-identical to locally generated JSON. Self hash `f6cc410869535a136a5566ff9c100200142ece99e501b3cf6cc16915d31c5294`, NOT signed or independently anchored.
 - **LIMITS**: This is a *real Firebird 4 SQL/TPB check*, NOT runtime execution of the `federation/mon_probe.py` Python driver (not installed), NOT Firebird 5.0.3/5.0.4 Windows #9269 reproduction, NOT a cause/fix/HA claim. ON CONNECT trigger risk in arbitrary DB still applies; new disposable test DB only. 
 - **G1.1**: `PASS_SCOPED_FIREBIRD4_SQL`; G1.2 actual Python driver/runtime and G2 Windows fault still `NOT_RUN`. Existing GitHub synthetic G1 CI remains independent; no production connection, no engine patch, no merge, `claim_allowed=false`.
+
+## G1.1 portability/hotfix — append-only v2 (2026-11-06)
+
+- Discovered G1.1 original lab script hardcoded `/mnt/data` output path, not portable to operator environments (Termux included). Historic v1 script/blob/receipt are **preserved**, never overwritten.
+- **New independently executed V2** `federation/labs/firebird4_disposable_sql_gate_v2.py`, Git blob `3343e65f3ac0d87a7726cd02f8191903add6c6fa` equals local executed bytes. Unique receipt name, `RAF_G1_RECEIPT_DIR` optional (defaults current working directory), atomic exclusive creation O_EXCL with permissions 0600 and fsync; never overwrites prior receipt.
+- Real Firebird4.0.5 embedded two independent runs `PASS_SCOPED_FIREBIRD4_SQL`, both readonly INSERT rejected/COUNT=0; two separate receipt JSON files remained with mode 0600; nonexistent output directory produced `BLOCKED_RECEIPT_DIRECTORY` exit 2, no prior receipt modified.
+- V2 example receipt `receipts/2026-11-06-FB4-LAB-PORTABLE-V2.json`, Git blob `72ec9d5b743568da94f17448df752378dff62122`, self SHA `c112434a02126ad7acbfc2d144117ba8ce11704b64e78ff8a51d61bc6accac94` (self integrity, NOT signature).
+- V2 **does not** run the optional Python Firebird driver, reproduce Firebird5 Windows #9269 or prove DB failover; claims remain `false`. Rollback: use previous v1 source for historic reproduction or close draft; no engine/source/main mutation.

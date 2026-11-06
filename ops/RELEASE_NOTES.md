@@ -39,3 +39,7 @@ A real embedded Firebird 4.0.5 engine on Linux x86_64 executed the same fixed MO
 ## #9269 H2 prevention gate — vendor libcds API reviewed
 
 Pinned Firebird vendor `MichaelKVList` API shows `erase_with` is a key-order comparator, not atomic key+value compare-and-delete, and `erase(key, Func)` is not an action veto. Reject naive pointer-aware comparator/erase callback patches pending a value-conditional removal or proved synchronization design. Forensics doc specifies the falsifying race schedule; no engine patch or libcds runtime test claimed.
+
+## G1.1 lab portability correction — v2 (unreleased)
+
+The original independently executed Firebird4 lab reproducer and JSON remain immutable. A v2 successor replaces the fixed `/mnt/data` receipt path with default current directory or `RAF_G1_RECEIPT_DIR`, unique filenames, O_EXCL exclusive create, owner-only 0600 permissions and fsync. The v2 exact Git blob equals the locally executed source; two new disposable Firebird 4 tests and one missing-directory negative check passed. Historic receipts are never overwritten. This is not a service or DB failover.

@@ -48,3 +48,8 @@
 - [Lab executable](../federation/labs/firebird4_disposable_sql_gate.py) byte-identical to independently executed local file at Git blob `b499384ca8a4daf693386d6d4659386d05acfd8b`.
 - [Lab receipt](../receipts/2026-11-06-FB4-disposable-mon-sql.json) Git blob `c72660bfbaa86c4ee87d8ffd8c37b9109f11d671`; read-only transaction DML rejection+zero rows verified in REAL Firebird 4.0.5 test-only database.
 - Scope **SQL/TPB syntax and behavior only**. Exact Python MON adapter executable real DB test remains `NOT_RUN`; Firebird 5 Windows disk-full #9269 H1/H2 still UNRESOLVED. Do not promote lab SQL result to engine fix, realtime monitoring or failover claim.
+
+## Portable G1.1 lab successor (2026-11-06)
+
+- **Prefer V2:** [portable independent Firebird4 lab gate](../federation/labs/firebird4_disposable_sql_gate_v2.py) Git blob `3343e65f3ac0d87a7726cd02f8191903add6c6fa`, exact executable locally tested twice (different temporary databases); output directory default current directory or `RAF_G1_RECEIPT_DIR`, exclusive append-only unique files.
+- [V2 real receipt](../receipts/2026-11-06-FB4-LAB-PORTABLE-V2.json) Git blob `72ec9d5b743568da94f17448df752378dff62122`; old V1 source & receipt retained as preceding evidence. Negative missing output dir returns exit 2, no overwrite; scope still REAL_FIREBIRD4_SQL only, not Python Firebird adapter or #9269 causal test.

@@ -28,3 +28,7 @@ Read [federation/AGENTS.md](AGENTS.md), [issue #9269 source-model](FORENSICS_926
 ## G1.1 disposable runtime SQL falsifier (Firebird 4 only)
 
 [Standalone exact lab script](labs/firebird4_disposable_sql_gate.py) and [completed local receipt](../receipts/2026-11-06-FB4-disposable-mon-sql.json) are reproducible offline when `isql-fb` for Firebird 4 is installed. The script accepts **no external database path**, creates its own private ephemeral DB, attempts a forbidden INSERT under READ ONLY, verifies it failed and table remains empty, prints only safe aggregates, then cleans **only its own temporary test DB**. It is not part of default CI or a live Firebird attachment. Use this evidence only for SQL/TPB Firebird4 compatibility, not for issue #9269.
+
+### Lab v2 recommended — no hardcoded environment paths
+
+Use `python3 federation/labs/firebird4_disposable_sql_gate_v2.py` (requires independently installed Firebird4 `isql-fb`), optionally `RAF_G1_RECEIPT_DIR=/existing/private/directory`. The script creates only its own random temporary database and **unique 0600 receipts** in the selected directory, fails closed if missing/unwritable, and does not overwrite prior evidence. Do not place real database credentials in commands or logs. Original v1 lab source is historical and has a ChatGPT-only output location, preserved for audit. Neither version attempts a production Firebird connection or reproduces #9269.
