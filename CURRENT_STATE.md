@@ -1,3 +1,17 @@
+## CURRENT_STATE G0c — evidence successor (2026-11-08)
+
+- Producer: rafaelmeloreisnovo/Rafcode-FireBird; PR #4 remains DRAFT/HOLD (unmerged) when this record was created. Base main d761a29949c6bba921e6c408c8d5f088d9c5664a; exact most recently **tested source + scripts** HEAD 38c34e157d1490fab21c8a81562d1b451b9cb5c5.
+- CI at that SHA: https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42510745116, job 128823038191 SUCCESS; GCC and Clang guard assertions 30041 each, evidence-gate checks 10028 each, Python 17 tests. ELF x86_64, ARMv7, AArch64 source objects PASS; negative tests rejected undefined external symbol, direct syscall, legacy x86 int0x80, wrong machine and missing tool. Linux static -nostdlib x86_64 binary executed PASS; ARMv7/AArch64 static link PASS but RUNTIME=NOT_RUN.
+- This subsequent CURRENT_STATE + monitoring spec update is **documentation only**; it does not change tested C, scripts or source gate. Do not claim the new documentation commit itself was exercised by the earlier CI.
+- Firebird monitoring critical observation: official Firebird 5 docs expose special DELETE behavior that can close monitored connections or cancel statements; monitoring adapter spec forbids all DML and raw SQL. See docs/FIREBIRD_MONITORING_READ_ONLY_BOUNDARY_V1.md. G1 live Firebird and #9269 fault reproduction remain NOT_IMPLEMENTED/NOT_RUN.
+- Google Drive: NEXUS main ledger batchUpdate FAILED_PRECONDITION (both guarded and unguarded paths); authoritative fallback **NEXUS shard 2026-11-002** append-only μWRITE MU-FIREBIRD-G0C-DMAIC-20261108-S2 was written and read back: https://docs.google.com/document/d/1lHwoNgavaCWvG6nzHxTrAJ9UYFW3wTZkmW4rmeViOVs/edit . Do not claim the main ledger was updated.
+- Supabase Rafcodephi healthy project, queried schemas public/audit/rafaelia returned no tables; no schema, SQL, privileges or migrations were changed. Not a designated Firebird receipt producer.
+- ISO 8000-61, ISO/IEC 27001/27002, ISO 27500, IEEE 1012, W3C PROV-O, BCP14 and NIST SP800-53/53A are **process references**, not certification. See docs/PROCEDURAL_ASSURANCE_V1.md.
+- claim_allowed=false; merge_allowed=false; ARM hardware/Android real execution, Firebird database E2E, cryptographic external anchor, independent legal and compliance assessment remain NOT_RUN/UNKNOWN.
+- Rollback: close PR #4 or revert its additive commits; no Firebird engine, database or GitHub main change occurred. Follow-up requires authorized physical Motorola evidence and a disposable Firebird runtime, no autonomous remediation.
+
+---
+
 ## CURRENT_STATE correction — 2026-11-08 (supersedes obsolete branch-only claim below)
 
 - GitHub main HEAD **d761a29949c6bba921e6c408c8d5f088d9c5664a**, observed via repository branch API 2026-11-08; PR #1 was **merged** into main 2026-11-06. The historical statement below, "main remains untouched", is no longer current and is preserved only for historical traceability.

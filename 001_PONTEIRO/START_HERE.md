@@ -34,3 +34,8 @@
 - docs/PROCEDURAL_ASSURANCE_V1.md: six-sigma DMAIC plus ISO/IEC/IEEE/W3C/IETF/NIST-inspired control objectives and evidence gates.
 - NUCLEOS/ports/linux/README.md: separate syscall-aware entry adapters, no libc, no Firebird and no APK.
 - scripts/check-core-object.sh and scripts/check-abi-falsifiers.sh: positive/negative source tests. Any tool absence blocks; actual ARM hardware remains NOT_RUN.
+
+## Firebird monitoring seam — separate future gate
+
+- [Firebird MON$ read-only adapter contract](../docs/FIREBIRD_MONITORING_READ_ONLY_BOUNDARY_V1.md): licensed upstream guidance, snapshot freshness, privileged DELETE hazard and precise tests; SPEC_ONLY, no real DB connected.
+- [Latest G0c status](../CURRENT_STATE.md): tested source SHA, GitHub run, Drive shard receipt and remaining typed unknowns.
