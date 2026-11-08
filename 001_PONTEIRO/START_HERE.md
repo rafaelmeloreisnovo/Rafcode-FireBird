@@ -39,3 +39,9 @@
 
 - [Firebird MON$ read-only adapter contract](../docs/FIREBIRD_MONITORING_READ_ONLY_BOUNDARY_V1.md): licensed upstream guidance, snapshot freshness, privileged DELETE hazard and precise tests; SPEC_ONLY, no real DB connected.
 - [Latest G0c status](../CURRENT_STATE.md): tested source SHA, GitHub run, Drive shard receipt and remaining typed unknowns.
+
+## G0d separate Android APK smoke probes
+
+- `android/guard/README.md`: per-ABI launcher and limitations (not Firebird engine).
+- `.github/workflows/build-guard-apks.yml`: freestanding-core gate + two distinct artifact uploads.
+- `scripts/build-android-guard-apk.sh`: static signed APK verifier; Android runtime NOT_RUN.

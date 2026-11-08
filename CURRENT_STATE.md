@@ -1,3 +1,13 @@
+## G0d — C11 core freestanding CI and two ABI-separated signed APK *probes* (2026-11-08)
+
+- Predecessor HEAD 0e200aaa804d9741809f68337286d2562d640424; new APK workflow needs exact-head CI before PASS. Core previous PASS does NOT prove APK.
+- GitHub Actions: independent no-SDK/NDK freestanding kernel gate, then ARMv7 and ARM64 signed NativeActivity smoke APKs (using SDK/NDK only for packaging/native adapter). No Gradle, manual JNI or Java source.
+- These are **RAFAELIA Guard probes** not Firebird engine APKs; separate engine producer `firebird_rafcodephi` Android project is library AAR, currently not a standalone server APK.
+- Physical Motorola E7, Android 14, Firebird database and APK install/launch remain NOT_RUN. Signing ephemeral, upgrading across CI runs not guaranteed.
+- No main edits, engine code, database or credentials changed. claim_allowed=false; merge_allowed=false; rollback revert proposed commit or close PR#4.
+
+---
+
 ## CURRENT_STATE G0c — evidence successor (2026-11-08)
 
 - Producer: rafaelmeloreisnovo/Rafcode-FireBird; PR #4 remains DRAFT/HOLD (unmerged) when this record was created. Base main d761a29949c6bba921e6c408c8d5f088d9c5664a; exact most recently **tested source + scripts** HEAD 38c34e157d1490fab21c8a81562d1b451b9cb5c5.
