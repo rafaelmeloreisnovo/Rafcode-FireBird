@@ -45,3 +45,8 @@
 - `android/guard/README.md`: per-ABI launcher and limitations (not Firebird engine).
 - `.github/workflows/build-guard-apks.yml`: freestanding-core gate + two distinct artifact uploads.
 - `scripts/build-android-guard-apk.sh`: static signed APK verifier; Android runtime NOT_RUN.
+
+## G0d signed APK artifacts and hashes
+
+- [Exact CI G0d receipt](../receipts/G0D_ANDROID_GUARD_APK_CI_20261108.md): per-ABI APK SHA256 and source-run custody. These are minimal Guard probes, NOT complete Firebird database APKs.
+- [ARMv7 APK from GitHub Actions](https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42512384275/artifacts/13630216268) and [AArch64 APK from GitHub Actions](https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42512384275/artifacts/13630251040). Archive lifetime limited; GitHub login may be required.

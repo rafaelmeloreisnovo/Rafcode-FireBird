@@ -1,3 +1,11 @@
+## G0d CI receipt readback — 2026-11-08
+
+**Tested code/workflow SHA:** `4e3c3b94183f244005713755d16cbdfc1224a687` (success, exact). **GitHub run:** https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42512384275, three scoped jobs PASS including two separately signed NativeActivity APKs. **Review and artifact hashes:** [receipts/G0D_ANDROID_GUARD_APK_CI_20261108.md](receipts/G0D_ANDROID_GUARD_APK_CI_20261108.md). ARMv7 APK SHA256 `296c74fee9fe7df18dc6296528bf1ae6255ce608b71cf396a20f81a9849caab5`; ARM64 APK SHA256 `1f923d03e1682f6cd2ad463ade03bad8ccaca9677cdedf406dfdb3fbb80ba8ad`.
+
+**PASS_SCOPED:** freestanding core object audit, native-Android platform adapter build, APK signature/static inspection/architecture; **NOT_RUN:** physical Motorola E7 Power / Android launch / Firebird engine or SQL functionality. Engine fork currently AAR library, separate producer. Signing keys are ephemeral and not a production upgrade path. `claim_allowed=false; merge_allowed=false`; PR remains draft. Do not treat ZIP digest as APK digest.
+
+---
+
 ## G0d — C11 core freestanding CI and two ABI-separated signed APK *probes* (2026-11-08)
 
 - Predecessor HEAD 0e200aaa804d9741809f68337286d2562d640424; new APK workflow needs exact-head CI before PASS. Core previous PASS does NOT prove APK.
