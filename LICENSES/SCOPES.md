@@ -12,3 +12,7 @@
 License statements cover only the original material where the respective authors/contributors possess rights. Preserve attribution, original notices, and exact source commit. Any future copy of third-party code must be reviewed before a license assertion. MIT is permissive but does not certify originality, security, patent status, compliance or suitability.
 
 For specific legal and provenance falsifiers, see [AUTHORIAL_FIREBIRD_BOUNDARY.md](AUTHORIAL_FIREBIRD_BOUNDARY.md). The existence of more than one license scope does not put upstream Firebird code under MIT or make the entire repository dual-licensed.
+
+## Additive G0c scope
+
+NUCLEOS/ports/linux/*.c and scripts/check-*.sh contain original MIT implementation code where authors hold rights; NUCLEOS/LICENSE and audit/LICENSE govern as applicable. docs/PROCEDURAL_ASSURANCE_V1.md and NUCLEOS/ports/linux/README.md are authored prose under CC BY 4.0, excluding third-party normative terms. This does not alter upstream Firebird IPL/IDPL or replace original notices.

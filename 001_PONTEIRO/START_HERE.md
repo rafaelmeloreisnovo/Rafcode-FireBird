@@ -28,3 +28,9 @@
 - [Original/official license boundary](../LICENSES/AUTHORIAL_FIREBIRD_BOUNDARY.md): independent MIT kernels vs official Firebird IPL/IDPL; original import lineage unchanged.
 - [Freestanding ABI falsifier](../docs/FREESTANDING_ABI.md): compile-only ARMv7/AArch64 ELF object gate; hosted CI/runtime and Android execution are different states.
 - [Pure shell executable gate](../scripts/check-freestanding-abi.sh): never an APK generator, Firebird engine build or proof of no hardware syscalls.
+
+## G0c route
+
+- docs/PROCEDURAL_ASSURANCE_V1.md: six-sigma DMAIC plus ISO/IEC/IEEE/W3C/IETF/NIST-inspired control objectives and evidence gates.
+- NUCLEOS/ports/linux/README.md: separate syscall-aware entry adapters, no libc, no Firebird and no APK.
+- scripts/check-core-object.sh and scripts/check-abi-falsifiers.sh: positive/negative source tests. Any tool absence blocks; actual ARM hardware remains NOT_RUN.

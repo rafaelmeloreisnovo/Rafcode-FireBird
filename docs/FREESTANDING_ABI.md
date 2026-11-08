@@ -41,3 +41,7 @@ Adversarial fixture: add `extern void outside(void); void deliberate_bad(void) {
 **Future optional inline ASM:** only for an ABI-targeted bottleneck with a verified C reference, explicit clobbers, operand widths, memory-ordering and CPU-feature guards; require bitwise differential tests on ARMv7/AArch64 real devices. Raw opcodes/hex have no automatic speed benefit and increase instruction/endianness risk. Keep such experiments out of portable core until demonstrated.
 
 **Current status of this document:** guidance + compile-check script. Tests against the *exact repository HEAD* require a separate recorded execution receipt; local representative-fixture tests alone are not such a receipt. `claim_allowed=false`.
+
+## G0c bounded executable and falsifiers
+
+The scripts/check-core-object.sh ELF examiner checks the machine, unresolved symbols, and banned direct OS entry instructions in isolated core objects. scripts/check-abi-falsifiers.sh rejects an external call, a direct syscall and a wrong architecture, and rejects tool absence as BLOCKED. scripts/check-linux-standalone.sh builds static Linux-only executables without libc, runs x86_64 locally, and only links ARMv7/AArch64. See PROCEDURAL_ASSURANCE_V1.md; current new-head gate cannot be asserted before CI evidence.

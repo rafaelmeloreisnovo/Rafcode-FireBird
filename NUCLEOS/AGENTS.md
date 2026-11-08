@@ -17,3 +17,7 @@ Read root [AGENTS.md](../AGENTS.md), [INDEX.md](INDEX.md), [LICENSE](LICENSE) be
 **Upstream contribution:** no Firebird engine source inside this tree. #9269 disk-full fault reproduction must occur only with a disposable isolated database; no live interception or restart. Preserve the upstream's IPL/IDPL license and contributor guidance for upstream fixes.
 
 **Finishing:** summarize `F_ok | F_gap | F_next`; cite tested execution and declared rollback, never a general security attestation from local tests.
+
+## Platform-dependent boundary, G0c
+
+The separate NUCLEOS/ports/linux files may use exactly the Linux exit syscall for an opt-in synthetic executable. They MUST NOT be linked into NUCLEOS/src or NUCLEOS/include objects. Cross-linked ARM is NOT physical Android E2E. Use check-abi-falsifiers.sh before a new gate can pass, and keep human review mandatory.
