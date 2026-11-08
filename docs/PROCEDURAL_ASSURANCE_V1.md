@@ -24,3 +24,7 @@ Scope: original C11 guard/evidence gate and isolated Linux exit adapter only. No
 - G0c requires new CI evidence at new HEAD, not earlier G0b PASS. Physical Motorola ARMv7 and AArch64, Android E2E, #9269, legal ownership investigation, signed external evidence remain NOT_RUN / TOKEN_VAZIO.
 - claim_allowed=false; merge_allowed=false. Rollback: revert proposed additive commit or close DRAFT PR, preserve main and production data.
 - Receipt contract: μID | time | source/ref | base/head SHA | paths | commands | positive/negative results | risk/privacy | gaps | next | rollback. Only readback can promote a claim.
+
+## G0c successor falsifier hardening
+
+The earlier instruction list omitted the x86 legacy int 0x80 trap and did not explicitly bind readelf -Ws / disassembler exit codes. The successor scripts reject both; missing tool is separately tested as BLOCKED, not an expected FAIL, without downgrading the existing source gates. This subsection is corrective, not a new claimed standard or compliance level.
