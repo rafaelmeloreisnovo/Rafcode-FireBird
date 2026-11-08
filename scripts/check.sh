@@ -10,4 +10,6 @@ for compiler in gcc clang; do
     echo "G0 compiler=$compiler NOT_RUN unavailable"
   fi
 done
+# Independently prove that freestanding *objects* have no unresolved externals.
+sh scripts/check-freestanding-abi.sh
 python3 -m unittest discover -v -s audit/tests

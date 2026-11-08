@@ -22,3 +22,9 @@
 - **A** adaptive: only cadence within configured bounds; never autonomous recovery.
 
 `SOURCE != ARTIFACT != EXECUTION != EVIDENCE != CLAIM`. Return R3 with each meaningful cycle.
+
+## New isolated route — 2026-11-08
+
+- [Original/official license boundary](../LICENSES/AUTHORIAL_FIREBIRD_BOUNDARY.md): independent MIT kernels vs official Firebird IPL/IDPL; original import lineage unchanged.
+- [Freestanding ABI falsifier](../docs/FREESTANDING_ABI.md): compile-only ARMv7/AArch64 ELF object gate; hosted CI/runtime and Android execution are different states.
+- [Pure shell executable gate](../scripts/check-freestanding-abi.sh): never an APK generator, Firebird engine build or proof of no hardware syscalls.

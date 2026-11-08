@@ -1,3 +1,14 @@
+## CURRENT_STATE correction — 2026-11-08 (supersedes obsolete branch-only claim below)
+
+- GitHub main HEAD **d761a29949c6bba921e6c408c8d5f088d9c5664a**, observed via repository branch API 2026-11-08; PR #1 was **merged** into main 2026-11-06. The historical statement below, "main remains untouched", is no longer current and is preserved only for historical traceability.
+- New proposed producer branch: `feat/authorial-freestanding-abi-boundary-20261108`, base main `d761a299...`; no merge authorized. Scope: license boundary manifest, freestanding object-symbol audit, C11 build-script wiring, docs and route pointers; engine source and production data are unchanged.
+- Tested G0 checkpoint `8abc739...` belongs to the earlier source; do not automatically transfer its PASS to the new branch. Exact new HEAD object audit, CI and physical ARM runtime = **NOT_RUN pending evidence**.
+- Separate Firebird IPL/IDPL source remains in another repository; `NUCLEOS` MIT and authored documentation CC BY 4.0 retained. Clean-room status of every historical contribution is not independently certified.
+- **claim_allowed=false; merge_allowed=false** for this scoped proposal. Rollback: revert this additive branch commit or close draft PR; no database rollback is relevant.
+- Upstream/official producer route: `LICENSES/AUTHORIAL_FIREBIRD_BOUNDARY.md`; freestanding build gate: `docs/FREESTANDING_ABI.md`. Dynamic Firebird integration = NOT_IMPLEMENTED.
+
+---
+
 # CURRENT_STATE — Rafcode-FireBird producer
 
 - **Producer**: `rafaelmeloreisnovo/Rafcode-FireBird`; default branch `main` remains untouched while this implementation is on a feature branch.
