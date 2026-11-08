@@ -1,0 +1,65 @@
+name: freestanding-core-and-two-Android-guard-APKs
+on:
+  push:
+    paths:
+      - 'NUCLEOS/**'
+      - 'android/guard/**'
+      - 'scripts/build-android-guard-apk.sh'
+      - '.github/workflows/build-guard-apks.yml'
+  pull_request:
+    paths:
+      - 'NUCLEOS/**'
+      - 'android/guard/**'
+      - 'scripts/build-android-guard-apk.sh'
+      - '.github/workflows/build-guard-apks.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  core-freestanding:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: C11 freestanding, no Android toolchain
+        run: sh scripts/check-freestanding-abi.sh
+  apk-armv7:
+    needs: core-freestanding
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Build and verify signed ARM32 smoke APK
+        run: sh scripts/build-android-guard-apk.sh armeabi-v7a
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rafaelia-firebird-guard-probe-armeabi-v7a
+          path: |
+            out/apk/rafaelia-firebird-guard-probe-armeabi-v7a.apk
+            out/apk/sha256-armeabi-v7a.txt
+            out/apk/receipt-armeabi-v7a.txt
+          if-no-files-found: error
+          retention-days: 7
+  apk-arm64:
+    needs: core-freestanding
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Build and verify signed ARM64 smoke APK
+        run: sh scripts/build-android-guard-apk.sh arm64-v8a
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rafaelia-firebird-guard-probe-arm64-v8a
+          path: |
+            out/apk/rafaelia-firebird-guard-probe-arm64-v8a.apk
+            out/apk/sha256-arm64-v8a.txt
+            out/apk/receipt-arm64-v8a.txt
+          if-no-files-found: error
+          retention-days: 7
