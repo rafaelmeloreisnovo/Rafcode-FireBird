@@ -1,0 +1,47 @@
+{
+  "schema": "rafcode-firebird-android-consumer-ci-v1",
+  "event_id": "MU-RAFCODE-FIREBIRD-AAR-APK-JDK17-20261109-S1",
+  "producer_repo": "rafaelmeloreisnovo/Rafcode-FireBird",
+  "source_sha": "67f12bd8346155ea58588973520687eb71355f27",
+  "base_sha": "38d562a26339ac1434a9251c10331b5682b28591",
+  "fork_producer_sha": "f19db285f98331192ba3887fa04d2059843623cd",
+  "branch": "fix/android-sdk-jdk17-failclosed-20261109",
+  "ci": {
+    "run_id": 42619666996,
+    "url": "https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42619666996",
+    "job_id": 129168239142,
+    "conclusion": "success",
+    "sdk_manager": "PASSED_JAVA17",
+    "android_sdk32": "PASSED",
+    "gradle": "BUILD_SUCCESSFUL",
+    "apk_debug_signature": "VERIFIED_BY_CI",
+    "artifacts": [
+      {
+        "id": 13675201663,
+        "name": "firebird-embedded-library-aar",
+        "zip_sha256": "403efc91749b0bdcb677f2e99438265f68b54729654f28fae909e32f8a482adb"
+      },
+      {
+        "id": 13675196711,
+        "name": "firebird-embedded-library-consumer-apk-NOT-ENGINE",
+        "zip_sha256": "3a88570f1d7909e7374bb737210176884e2be3f7b8d2cd7d93d5334351b5fa4a"
+      }
+    ]
+  },
+  "scope": {
+    "aar": "BUILT",
+    "apk": "BUILT_SIGNED_LIBRARY_PROBE",
+    "native_engine": "BLOCKED_NO_NATIVE_FIREBIRD_ENGINE",
+    "sql": "NOT_RUN",
+    "android_physical": "NOT_RUN",
+    "production_data": "UNTOUCHED_BY_WORKFLOW",
+    "claim_allowed": false
+  },
+  "limits": [
+    "artifact digests cover CI ZIP archives, not inner APK/AAR bytes",
+    "no embedded native Firebird engine packaged",
+    "no physical Android run or SQL transaction evidence"
+  ],
+  "rollback": "Revert this one-workflow-fix patch; default main remains unchanged until separately merged",
+  "next": "Audit native engine source and ABI dependency, build real libfbclient under fork-producer CI, then validate disposable database transactions"
+}
