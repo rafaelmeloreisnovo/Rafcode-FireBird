@@ -36,8 +36,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          java -version 2>&1 | grep -Eq 'version "17\\.|openjdk version "17\\.'
-          test -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          java -version
+          java -XshowSettings:properties -version 2>&1 | tee /tmp/raf-java-version.txt
+          grep -Eq 'java.specification.version = 17([[:space:]]|$)' /tmp/raf-java-version.txt
+          test -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" || {
+            printf '%s\\n' "SDKMANAGER_MISSING_OR_NOT_EXECUTABLE=$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+            exit 1
+          }
       - name: Ensure Android SDK 32
         shell: bash
         run: |
