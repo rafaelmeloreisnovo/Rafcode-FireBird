@@ -28,8 +28,9 @@ mkdir -p "$work/lib/$abi" out/apk
 sed -e "s/@PACKAGE@/$pkg/g" -e "s/@LABEL@/$title/g" android/guard/AndroidManifest.xml.in >"$work/AndroidManifest.xml"
 flags='-std=c11 -O2 -ffreestanding -fno-builtin -fPIC -fvisibility=hidden -fstack-protector-strong -Wall -Wextra -Werror -pedantic'
 "$toolchain/$cc" $flags -c NUCLEOS/src/raf_gate.c -o "$work/core.o"
+"$toolchain/$cc" $flags -c android/guard/beta_suite.c -o "$work/beta_suite.o"
 "$toolchain/$cc" $flags -c android/guard/native_activity.c -o "$work/adapter.o"
-"$toolchain/$cc" -shared -Wl,--no-undefined -Wl,-z,relro,-z,now "$work/adapter.o" "$work/core.o" -landroid -o "$work/lib/$abi/librafguard.so"
+"$toolchain/$cc" -shared -Wl,--no-undefined -Wl,-z,relro,-z,now "$work/adapter.o" "$work/beta_suite.o" "$work/core.o" -landroid -o "$work/lib/$abi/librafguard.so"
 readelf -h "$work/lib/$abi/librafguard.so" | grep -q "$machine" || { echo 'APK_GUARD=FAIL ELF architecture' >&2; exit 1; }
 readelf -Ws "$work/lib/$abi/librafguard.so" | grep -q ANativeActivity_onCreate || { echo 'APK_GUARD=FAIL missing entry' >&2; exit 1; }
 "$bt/aapt2" link --manifest "$work/AndroidManifest.xml" -I "$androidjar" --min-sdk-version 23 --target-sdk-version 28 -o "$work/base.apk"
