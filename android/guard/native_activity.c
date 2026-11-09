@@ -18,9 +18,11 @@ static AInputQueue *active_queue;
 static ALooper *active_looper;
 static raf_beta_report last_report;
 static int executed;
+static int receipt_ok;
 
 static const uint8_t *letter(char c) {
     static const uint8_t a[7]={14,17,17,31,17,17,17};
+    static const uint8_t e[7]={31,16,16,30,16,16,31};
     static const uint8_t f[7]={31,16,16,30,16,16,16};
     static const uint8_t i[7]={31,4,4,4,4,4,31};
     static const uint8_t l[7]={16,16,16,16,16,16,31};
@@ -33,7 +35,7 @@ static const uint8_t *letter(char c) {
     static const uint8_t u[7]={17,17,17,17,17,17,14};
     static const uint8_t blank[7]={0,0,0,0,0,0,0};
     switch(c) {
-        case 'A':return a;case 'F':return f;case 'I':return i;
+        case 'A':return a;case 'E':return e;case 'F':return f;case 'I':return i;
         case 'L':return l;case 'N':return n;case 'O':return o;
         case 'P':return p;case 'R':return r;case 'S':return s;
         case 'T':return t;case 'U':return u;default:return blank;
@@ -84,6 +86,8 @@ static void draw(void) {
             uint32_t i;
             text_line(&b,last_report.failed?"FAIL":"PASS",b.width/10,b.height/3,s*2,
                       last_report.failed?0xffff5555u:0xff4cdd9fu);
+            text_line(&b,receipt_ok?"FILE PASS":"FILE FAIL",b.width/10,b.height*2/5,s,
+                      receipt_ok?0xff4cdd9fu:0xffff5555u);
             for(i=0u;i<last_report.count;i++) {
                 int col=(int)(i%6u), row=(int)(i/6u);
                 int left=b.width/8+col*b.width/8;
@@ -99,23 +103,26 @@ static void draw(void) {
     (void)ANativeWindow_unlockAndPost(active_window);
 }
 
-static void persist(const raf_beta_report *report) {
+static int persist(const raf_beta_report *report) {
     char path[512];
     FILE *out;
     uint32_t i;
-    if(!active_activity || !active_activity->internalDataPath || !report) return;
-    if(snprintf(path,sizeof(path),"%s/betatester-last.csv",active_activity->internalDataPath)
-       >=(int)sizeof(path)) return;
-    out=fopen(path,"w");
-    if(!out) return; /* File failure is not a test PASS; see on-screen scoped results. */
-    (void)fprintf(out,"schema;seed;scope;physical;engine\n1;%u;gate_sandbox;UNVERIFIED;NOT_RUN\n",
-                  report->seed);
-    (void)fprintf(out,"case_id;route;status\n");
+    int ok=1;
+    if(!active_activity || !active_activity->internalDataPath || !report) return 0;
+    if(snprintf(path,sizeof(path),"%s/betatester-%08x.csv",
+                active_activity->internalDataPath,report->seed)
+       >=(int)sizeof(path)) return 0;
+    out=fopen(path,"wx");
+    if(!out) return 0; /* collision or inaccessible storage = FAIL evidence */
+    if(fprintf(out,"schema;seed;scope;physical;engine\n1;%u;gate_sandbox;UNVERIFIED;NOT_RUN\n",
+               report->seed)<0) ok=0;
+    if(fprintf(out,"case_id;route;status\n")<0) ok=0;
     for(i=0u;i<report->count;i++)
-        (void)fprintf(out,"GATE_%02u;%u;%s\n",i,report->cases[i].route,
-                      report->cases[i].pass?"PASS":"FAIL");
-    (void)fprintf(out,"summary;pass=%u;fail=%u\n",report->passed,report->failed);
-    (void)fclose(out);
+        if(fprintf(out,"GATE_%02u;%u;%s\n",i,report->cases[i].route,
+                   report->cases[i].pass?"PASS":"FAIL")<0) ok=0;
+    if(fprintf(out,"summary;pass=%u;fail=%u\n",report->passed,report->failed)<0) ok=0;
+    if(fclose(out)!=0) ok=0;
+    return ok;
 }
 
 static void run_once(void) {
@@ -125,7 +132,7 @@ static void run_once(void) {
         seed^=(uint32_t)ts.tv_nsec^(uint32_t)ts.tv_sec;
     raf_beta_run(&last_report,seed);
     executed=1;
-    persist(&last_report);
+    receipt_ok=persist(&last_report);
     draw();
 }
 
