@@ -29,7 +29,15 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '11'
+          java-version: '17'
+      # sdkmanager on ubuntu-24.04 requires classfile 61 / JDK17; Gradle 7.3.3 supports 17.
+      # Falsifier: wrong JVM must fail before provisioning; do not mask SDK errors.
+      - name: Verify SDK manager JVM compatibility
+        shell: bash
+        run: |
+          set -euo pipefail
+          java -version 2>&1 | grep -Eq 'version "17\\.|openjdk version "17\\.'
+          test -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
       - name: Ensure Android SDK 32
         shell: bash
         run: |
