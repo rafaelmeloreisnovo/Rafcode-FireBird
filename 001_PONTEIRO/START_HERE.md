@@ -50,3 +50,8 @@
 
 - [Exact CI G0d receipt](../receipts/G0D_ANDROID_GUARD_APK_CI_20261108.md): per-ABI APK SHA256 and source-run custody. These are minimal Guard probes, NOT complete Firebird database APKs.
 - [ARMv7 APK from GitHub Actions](https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42512384275/artifacts/13630216268) and [AArch64 APK from GitHub Actions](https://github.com/rafaelmeloreisnovo/Rafcode-FireBird/actions/runs/42512384275/artifacts/13630251040). Archive lifetime limited; GitHub login may be required.
+
+## One-tap scoped BetaTester v1 — isolated proposal
+
+- [Android native tap entry](../android/guard/native_activity.c) -> [C11 seeded cases](../android/guard/beta_suite.c) -> [host falsifier](../android/guard/test_beta_suite.c) -> [build and evidence contract](../docs/BETATESTER_ONE_TAP_V1.md).
+- Gate semantics only: engine excluded, on-device proof pending. Do not promote past IMPLEMENTED_UNTESTED from source alone.
