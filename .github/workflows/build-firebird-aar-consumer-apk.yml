@@ -1,0 +1,91 @@
+name: Firebird AAR consumer - compiled CI APK
+on:
+  push:
+    paths:
+      - 'android/firebird-library-consumer/**'
+      - '.github/workflows/build-firebird-aar-consumer-apk.yml'
+  pull_request:
+    paths:
+      - 'android/firebird-library-consumer/**'
+      - '.github/workflows/build-firebird-aar-consumer-apk.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  library-plus-apk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: consumer
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: rafaelmeloreisnovo/firebird_rafcodephi
+          ref: f19db285f98331192ba3887fa04d2059843623cd
+          path: producer
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+      - name: Ensure Android SDK 32
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f "$ANDROID_HOME/platforms/android-32/android.jar" ]; then
+            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-32"
+          fi
+          test -f "$ANDROID_HOME/platforms/android-32/android.jar"
+      - name: Consumer overlay, pinned source only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C producer rev-parse HEAD)" = f19db285f98331192ba3887fa04d2059843623cd
+          cp -R consumer/android/firebird-library-consumer/app producer/android/app
+          printf "\ninclude ':app'\n" >> producer/android/settings.gradle
+      - name: CI build AAR and consumer APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd producer/android
+          bash gradlew --no-daemon :embedded:assembleDebug :app:assembleDebug
+      - name: Verify and prepare separate artifacts and receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out/aar out/apk
+          aar=producer/android/embedded/build/outputs/aar/firebird-embedded-debug.aar
+          apk=producer/android/app/build/outputs/apk/debug/app-debug.apk
+          test -s "$aar" && test -s "$apk"
+          unzip -p "$aar" classes.jar > out/embedded-classes.jar
+          jar tf out/embedded-classes.jar | grep -Fx org/firebirdsql/android/embedded/FirebirdConf.class
+          unzip -Z1 "$apk" | grep -Fx classes.dex
+          signer=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner -print | sort -V | tail -n 1)
+          test -n "$signer"
+          "$signer" verify --verbose "$apk"
+          cp "$aar" out/aar/firebird-embedded-debug.aar
+          cp "$apk" out/apk/firebird-aar-library-validation-debug.apk
+          sha256sum out/aar/*.aar > out/aar/sha256.txt
+          sha256sum out/apk/*.apk > out/apk/sha256.txt
+          if unzip -Z1 "$aar" | grep -Eq '^jni/.+[.]so$' || unzip -Z1 "$apk" | grep -Eq '^lib/.+/(libfbclient|libEngine.*)[.]so$'; then
+            scope=NATIVE_PRESENT_NOT_FUNCTIONAL_PROOF
+          else
+            scope=BLOCKED_NO_NATIVE_FIREBIRD_ENGINE
+          fi
+          printf 'PRODUCER=f19db285f98331192ba3887fa04d2059843623cd\nCONSUMER=%s\nAAR=BUILT\nAPK=BUILT_SIGNED_LIBRARY_PROBE\nENGINE=%s\nSQL=NOT_RUN\nANDROID_PHYSICAL=NOT_RUN\n' "$GITHUB_SHA" "$scope" > out/apk/receipt.txt
+          cp out/apk/receipt.txt out/aar/receipt.txt
+          echo "LIBRARY_CONSUMER_CI=PASS_SCOPE_ENGINE=$scope"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: firebird-embedded-library-aar
+          path: out/aar/
+          if-no-files-found: error
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: firebird-embedded-library-consumer-apk-NOT-ENGINE
+          path: out/apk/
+          if-no-files-found: error
+          retention-days: 30
