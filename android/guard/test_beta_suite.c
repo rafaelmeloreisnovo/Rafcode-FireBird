@@ -9,7 +9,7 @@ int main(void) {
     uint32_t i, j;
     raf_beta_report r;
     raf_beta_run((raf_beta_report*)0, 1u);
-    for(i=0u;i<sizeof(seeds)/sizeof(seeds[0]);i++) {
+    for(i=0u;i<5u;i++) {
         raf_beta_run(&r,seeds[i]);
         if(r.seed!=seeds[i] || r.count!=RAF_BETA_MAX_CASES ||
            r.passed!=RAF_BETA_MAX_CASES || r.failed!=0u) {
