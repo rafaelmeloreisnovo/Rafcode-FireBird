@@ -25,6 +25,16 @@ jobs:
           persist-credentials: false
       - name: C11 freestanding, no Android toolchain
         run: sh scripts/check-freestanding-abi.sh
+      - name: Bounded BetaTester gate-case falsifiers (GCC and Clang)
+        run: |
+          set -eu
+          for compiler in gcc clang; do
+            "$compiler" -std=c11 -O2 -ffreestanding -fno-builtin -Wall -Wextra -Werror -pedantic \
+              -I android/guard android/guard/test_beta_suite.c \
+              android/guard/beta_suite.c NUCLEOS/src/raf_gate.c \
+              -o "/tmp/raf-betatester-$compiler"
+            "/tmp/raf-betatester-$compiler"
+          done
   apk-armv7:
     needs: core-freestanding
     runs-on: ubuntu-24.04
