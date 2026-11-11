@@ -4,10 +4,14 @@ on:
     paths:
       - 'android/firebird-library-consumer/**'
       - '.github/workflows/build-firebird-aar-consumer-apk.yml'
+      - 'scripts/firebird_consumer_scope_gate.py'
+      - 'audit/tests/test_firebird_consumer_scope_gate.py'
   pull_request:
     paths:
       - 'android/firebird-library-consumer/**'
       - '.github/workflows/build-firebird-aar-consumer-apk.yml'
+      - 'scripts/firebird_consumer_scope_gate.py'
+      - 'audit/tests/test_firebird_consumer_scope_gate.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -58,6 +62,9 @@ jobs:
           test "$(git -C producer rev-parse HEAD)" = f19db285f98331192ba3887fa04d2059843623cd
           cp -R consumer/android/firebird-library-consumer/app producer/android/app
           printf "\ninclude ':app'\n" >> producer/android/settings.gradle
+      - name: Offline scope gate synthetic adversarial tests
+        shell: bash
+        run: python3 -m unittest discover -v -s consumer/audit/tests -p test_firebird_consumer_scope_gate.py
       - name: CI build AAR and consumer APK
         shell: bash
         run: |
@@ -82,12 +89,15 @@ jobs:
           cp "$apk" out/apk/firebird-aar-library-validation-debug.apk
           sha256sum out/aar/*.aar > out/aar/sha256.txt
           sha256sum out/apk/*.apk > out/apk/sha256.txt
-          if unzip -Z1 "$aar" | grep -Eq '^jni/.+[.]so$' || unzip -Z1 "$apk" | grep -Eq '^lib/.+/(libfbclient|libEngine.*)[.]so$'; then
-            scope=NATIVE_PRESENT_NOT_FUNCTIONAL_PROOF
-          else
-            scope=BLOCKED_NO_NATIVE_FIREBIRD_ENGINE
-          fi
-          printf 'PRODUCER=f19db285f98331192ba3887fa04d2059843623cd\nCONSUMER=%s\nAAR=BUILT\nAPK=BUILT_SIGNED_LIBRARY_PROBE\nENGINE=%s\nSQL=NOT_RUN\nANDROID_PHYSICAL=NOT_RUN\n' "$GITHUB_SHA" "$scope" > out/apk/receipt.txt
+          # Independent hosted validator: inner AAR/JAR, APK DEX, ELF machine, unsafe ZIP paths.
+          # Passing this gate NEVER proves Firebird engine, SQL or physical Android.
+          checkout_sha=$(git -C consumer rev-parse HEAD)
+          python3 consumer/scripts/firebird_consumer_scope_gate.py \
+            --aar "$aar" --apk "$apk" --source-sha "$checkout_sha" \
+            --output out/apk/scope_gate.json
+          cp out/apk/scope_gate.json out/aar/scope_gate.json
+          scope=$(python3 -c "import json; print(json.load(open('out/apk/scope_gate.json'))['firebird_engine'])")
+          printf 'PRODUCER=f19db285f98331192ba3887fa04d2059843623cd\nCONSUMER=%s\nAAR=BUILT\nAPK=BUILT_SIGNED_LIBRARY_PROBE\nENGINE=%s\nSQL=NOT_RUN\nANDROID_PHYSICAL=NOT_RUN\n' "$checkout_sha" "$scope" > out/apk/receipt.txt
           cp out/apk/receipt.txt out/aar/receipt.txt
           echo "LIBRARY_CONSUMER_CI=PASS_SCOPE_ENGINE=$scope"
       - uses: actions/upload-artifact@v4
